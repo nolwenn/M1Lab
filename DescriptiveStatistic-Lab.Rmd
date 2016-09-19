@@ -1,0 +1,275 @@
+---
+title: 'Lab 1: Descriptive Analysis'
+author: "Nolwenn Le Meur & Pascal Crepey"
+date: "September, 13-14 2016"
+output: html_document
+---
+```{r include=FALSE}
+knitr::opts_chunk$set(eval=F, echo=F)
+solution <- FALSE
+
+
+```
+
+```{r correction, eval=T, echo=F, include=F}
+#Color Format
+colFmt = function(x,color){
+  outputFormat = knitr::opts_knit$get("rmarkdown.pandoc.to")
+  if(outputFormat == 'latex')
+    paste("\\textcolor{",color,"}{",x,"}",sep="")
+  else if(outputFormat == 'html')
+    paste("<font color='",color,"'>",x,"</font>",sep="")
+  else
+    x
+}
+```
+Objectives:
+
+* Describe the variables in term of data type
+* Summaryze the distribution of the variables using statistical parameters and graphics
+
+Data to investigate:
+
+You are studying the risk factors associated with low infant birth weight. The data were collected at Baystate Medical Center, Springfield, Mass during 1986.
+
+## 1. Load the data
+
+Open RStudio and the DescriptiveStatistic.pdf file. In RStudio, open a new R script file and save it as "Lab1.R". It will allow you to save all the R commands you wish to rerun an other time. 
+
+Load the MASS package using the `library()` function and the birthwt dataset using the `data()` function. Do not forget to comment your code using the `#` sign.
+
+```{r birthwt, echo=T, eval=T}
+# Loading library and dataset
+library(MASS)
+data(birthwt)
+```
+
+
+## 2. Overall description
+1. How many statistical units are included in the dataset?
+```{r nrow}
+#statistical units are in rows in a datasets
+nrow(birthwt)
+```
+2. How many variables characterize the statistical units?
+```{r col}
+#variables are in columns in a datasets
+ncol(birthwt)
+```
+
+```{r dim}
+#note  that you can also use dim() to directly get the dimensions of the dataset
+dim(birthwt)
+# useful function are also head() which shows you the first 6 rows or tail() the last 6
+head(birthwt)
+```
+
+3. What is the type of each variable? (hint look at the help page using either the `help()` function or the question marked followed with the dataset name or function name like `?birthwt`)
+```{r type}
+# binary : low, smoke, ht, ui,
+# nominal: race
+# quantitative discrete: ptl, ftv
+# quantitive continous: age, lwt, bwt
+```
+
+`r if(solution){colFmt("Knowing the type of the variables is useful as you do not use the same statistical parameters or graphics to summaryze or represent qualtitative data and quantitative data.", "blue")}`
+
+## 3. Summaryze the variables
+### a. Location parameter
+1. Follow the below example and use the `mean()`, `median()`, or `table()` function when it is appropriated to summaryze each variable. Make a sentence to explicit the results.
+
+`r if(solution){colFmt("For the qualitative variables, you can not compute a mean or median. the table() function create a contagency table and may allow you to identify the mode (most frequent value) if there is one. For quantitative variables, you can use all 3 functions. But for the mean and median be careful of the distribution shape before interpretation and for  continous variable like 'bwt' the table() function is not very useful beacause of too many possible values" , "blue")}`
+
+```{r low, echo=T}
+table(birthwt$low)
+mean(birthwt$age)
+```
+
+```{r lacation parameters, collapse=T}
+# In this sample, the number of children in the "non-low" birth weight category (coded 0) and the "low" birth weight category (coded 1) is respectively:
+table(birthwt$low)
+# On average, the women of this sample are aged:
+mean(birthwt$age)
+# 50% of the women are younger(older) than: 
+median(birthwt$age)
+# Women may go several times to their physician durin the first trimester.
+# But the average is:
+mean(birthwt$ftv)
+# While the median is:
+median(birthwt$ftv)
+# Overall the distribution is:
+table(birthwt$ftv)
+```
+
+3. What does the R command below do? Interpret the results.
+
+```{r bygroup, echo=T}
+by(birthwt$bwt, birthwt$race, mean)
+```
+`r if(solution){colFmt("The command computes the average birth weight according to the race of the mother. We can make the hypothese that there is an association between the weight at birth and the racial group (but we can say for sure yet, it will have to be tested statistically)" , "blue")}`
+
+### b. variation parameter
+1. Use the `quantile()` function to compute the 25%, 50%, and 75% percentile of the birth weight variable (hint: type `?quantile` in the console to have a look at the help page for the usage of the quantile function). Is the distribution of the birth weight skewed in one direction? Justify.
+
+```{r quantile, collapse=TRUE}
+quantile(birthwt$bwt)
+# Equivalent to 
+quantile(birthwt$bwt, c(0.25, 0.5, 0.75))
+# If you are interested in the 80th percentile :
+quantile(birthwt$bwt, c(0.8))
+```
+`r if(solution){colFmt("Looking at the differences between quartiles (Q2-Q1 and Q3-Q2) it hard to tell. But we are forgetting that there may be an association with the race. In addition to compute the mean by race, we could compute the interquartile range by race using the IQR() function." , "blue")}`
+```{r IQR}
+by(birthwt$bwt, birthwt$race, IQR)
+```
+
+2. As in question 3, use the `range()`, `var()`, and `sd()` functions within the function `by()` to summaryze the variation of the baby weights per racial group. What are your conclusion?
+```{r variation}
+# range of baby weights per racial group
+by(birthwt$bwt, birthwt$race,range)
+# variance of baby weight per racial group
+by(birthwt$bwt, birthwt$race,var)
+# standard variation of baby weight per racial group
+by(birthwt$bwt, birthwt$race,sd)
+```
+`r if(solution){colFmt("When looking at the range, standard deviation, and interquartile range, we note that birth weight in the 'black' group (race=2) seem less spread(more homogeneous) than in the other two. Overall, the dispersion is greater in the 'white'  group (which is even more interesting that it is the largest group.", "blue")}`
+
+3. In our dataset, is the mean always the best indicator to summarize the quantitative variables? Justify.
+```{r mean, collapse=TRUE}
+## For birth weight
+mean(birthwt$bwt)
+sd(birthwt$bwt)
+median(birthwt$bwt)
+IQR(birthwt$bwt)
+
+## For women's weight
+mean(birthwt$lwt)
+sd(birthwt$lwt)
+median(birthwt$lwt)
+IQR(birthwt$lwt)
+```
+`r if(solution){colFmt("For the baby's birth weight using the mean seems ok (+/- 700g) but the women's weight seem to vary a lot +/- 14Kg. For the latter it is probably better to use the median", "blue")}`
+
+4. Use `table()` to compute the number of individuals in each "race".
+`r if(solution){colFmt("See comment of question b.3 (Personal note: move up this question) ", "blue")}`
+
+## 4. Graphical summary
+
+1. What graphical representation is often used to display quantitative data?
+`r if(solution){colFmt("A histogram", "blue")}`
+
+2. What does the following command do? Comment the results.
+```{r hist10, echo=TRUE}
+hist(birthwt$age, breaks=c(10,20,30,40,50) , 
+  main="Distribution of age", xlab="age", ylab="Frequency", col="lightblue")
+```
+
+3. Re-apply the `hist()` function to represent the distribution of age using 5 years intervals. Comment on the results.
+```{r hist5}
+hist(birthwt$age,  breaks=c(10, 15, 20, 25, 30, 35, 40, 45, 50) , 
+     main="Distribution of age", xlab="age", ylab="Frequency", col="lightblue")
+```
+
+4. What does the following R code do?
+```{r histbyrace, echo=TRUE}
+white = subset(birthwt, race==1)
+hist(white$age, main="Distribution of age of white women", 
+     xlab="age", ylab="Frequency", col="lightblue")
+```
+
+5. Follow the above example to visualize the distribution of age among the other racial group. Comment on the different graphs.
+```{r histbyrace2}
+black = subset(birthwt, race==2)
+hist(black$age, main="Distribution of age of black women", 
+     xlab="age", ylab="Frequency", col="lightblue")
+
+other = subset(birthwt, race==3)
+hist(other$age, main="Distribution of age of other women", 
+     xlab="age", ylab="Frequency", col="lightblue")
+```
+
+6. Using the `subset()` and `plot()` functions, plot `age` versus `lwt` in "non-smoking" and "smoking" mothers. Comment the results.
+```{r scattercompare}
+smoker = subset(birthwt, smoke==1)
+nonsmoker = subset(birthwt, smoke==0)
+plot(smoker$age, smoker$lwt, xlab = "Age of Smoking mothers", ylab = "mother's weight", xlim=c(10,45), ylim=c(0,250))
+plot(nonsmoker$age, nonsmoker$lwt, xlab = "Age of Non-smoking mothers", ylab = "mother's weight", xlim=c(10,45), ylim=c(0,250))
+
+## Advance plot: every thing in the same plot
+plot(smoker$age, smoker$lwt, xlab = "Age of Smoking mothers", ylab = "mother's weight", 
+     xlim=c(10,45), ylim=c(0,250))
+points(nonsmoker$age, nonsmoker$lwt, col="red")
+legend(25, 50,c("smoking","non-smoking"), pch=19, col = 1:2)
+```
+
+7. Use the `boxplot()` function to represent the distribution of baby weight in the different racial group.
+```{r boxplotRace}
+boxplot(bwt ~ race, data=birthwt, main="Distribution of baby weight by racial group")
+```
+
+
+8. Use the `boxplot()` function to represent the distribution of baby weight in the smoking and non-smoking groups of women.
+```{r boxplotSmoke}
+boxplot(bwt ~ smoke, data=birthwt, main="Distribution of baby weight by women's smoking status")
+```
+
+```{r proprace, eval=T, echo=F}
+proprace=prop.table(table(birthwt$race))
+names(proprace)=c("white", "black", "other")
+```
+9. The proportion of mothers in each "race" is `r paste0(round(proprace[1]*100,0),"%")` for white, `r paste0(round(proprace[2]*100,0),"%")` for black, and `r paste0(round(proprace[3]*100,0),"%")` for others. Represent these proportions as a pie chart, using the `pie()` command.
+```{r pierace}
+pie(c(0.51,0.14,0.35), labels = c("white 51%", "black 14%", "others 35%"))
+```
+
+## 5. Absolute frequency and proportion
+
+Answer by TRUE or FALSE to the following questions:
+
+1. Among the smoking mothers, a greater proportion belong to the "other races"" category than to the "white" or "black" group. (hint use the `table()` followed by the `prop.table()` function - remenber use the  `help()` function to get help)
+```{r table row}
+smoke2race = table(birthwt$smoke, birthwt$race)
+prop.table(smoke2race, margin=1)
+```
+
+2. Among the "other" race group, most mothers smoke.
+```{r table col}
+prop.table(smoke2race, margin=2)
+```
+3. There is a significant association between the racial group of the mother and her smoking status during pregnancy. 
+
+## 6. Discretisation
+
+1. Summaryze the information relative to the mother's weight at last menstrual period using the `summary()` function.
+```{r summary}
+summary(birthwt$lwt)
+```
+
+2. Use the `cut()` function to categorize the mother's weight variable into 3 groups. Justify your choice of intervals.
+```{r discretisation}
+# using tercile
+tercile = quantile(birthwt$lwt, c(0, 0.33, 0.66, 1))
+lwtgroup1 = cut(birthwt$lwt, c(80,115,132,251), right=F)
+
+# using apriori "physiological" knowledge 
+lwtgroup2 = cut(birthwt$lwt, c(80, 110, 200, 251), right=F)
+```
+
+3. Build a two-way table to describe the proportion of the different racial groups in each of your mother's weight category. Discuss the results.
+```{r}
+groupTercile = table(lwtgroup1, birthwt$race)
+prop.table(groupTercile, margin=2)
+
+groupPhy = table(lwtgroup2, birthwt$race)
+prop.table(groupPhy, margin=2)
+```
+
+4. Similarly build a two-way table to describe the proportion of low birth weight children in each of your mother's weight category. Discuss the results.
+```{r}
+lwt2bwt33 = table(lwtgroup1, birthwt$low)
+prop.table(lwt2bwt33, margin=2)
+
+lwt2bwtPhy = table(lwtgroup2, birthwt$low)
+prop.table(lwt2bwtPhy, margin=2)
+```
+5. Class discussion

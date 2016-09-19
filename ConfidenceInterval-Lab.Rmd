@@ -1,0 +1,54 @@
+---
+title: 'Lab 2: Confidence Interval'
+author: "Nolwenn Le Meur & Pascal Crepey"
+date: "September, 27-28 2016"
+output: html_document
+---
+
+```{r include=FALSE}
+knitr::opts_chunk$set(eval=F, echo=F)
+solution <- FALSE
+
+
+```
+
+```{r correction, eval=T, echo=F, include=F}
+#Color Format
+colFmt = function(x,color){
+  outputFormat = knitr::opts_knit$get("rmarkdown.pandoc.to")
+  if(outputFormat == 'latex')
+    paste("\\textcolor{",color,"}{",x,"}",sep="")
+  else if(outputFormat == 'html')
+    paste("<font color='",color,"'>",x,"</font>",sep="")
+  else
+    x
+}
+```
+
+
+Objectives:
+* Compute confidence interval of a mean or proportion
+
+```{r install and load epiDisplay, echo=T, eval=T}
+# installepiDisplay
+# install.packages("epiDisplay")
+# Loading library 
+library(epiDisplay)
+```
+
+
+```{r birthwt, echo=T, eval=T}
+# Loading library and dataset
+library(MASS)
+data(birthwt)
+```
+
+```{r ci binomial, echo=T, eval=T}
+ci(birthwt$lwt)
+```
+
+```{r ci binomial, echo=T, eval=T}
+ci.binomial(birthwt$smoke)
+```
+
+# Example of confidence interval for incidence?
