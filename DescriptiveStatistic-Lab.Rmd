@@ -5,7 +5,7 @@ date: "September, 13-14 2016"
 output: html_document
 ---
 ```{r include=FALSE}
-knitr::opts_chunk$set(eval=F, echo=F)
+knitr::opts_chunk$set(eval=T, echo=T)
 solution <- FALSE
 
 
@@ -163,12 +163,14 @@ IQR(birthwt$lwt)
 hist(birthwt$age, breaks=c(10,20,30,40,50) , 
   main="Distribution of age", xlab="age", ylab="Frequency", col="lightblue")
 ```
+`r if(solution){colFmt("This histogram represents the distribution of ages of the women by interval of 10 years. It looks a bit rough.", "blue")}`
 
 3. Re-apply the `hist()` function to represent the distribution of age using 5 years intervals. Comment on the results.
 ```{r hist5}
 hist(birthwt$age,  breaks=c(10, 15, 20, 25, 30, 35, 40, 45, 50) , 
      main="Distribution of age", xlab="age", ylab="Frequency", col="lightblue")
 ```
+`r if(solution){colFmt("This histogram represents the distribution of ages of the women by interval of 5 years. It gives a better overview of the distribution of ages. Note however that there is no gold standard or recipe. One has to test a couple of plot before deciding which best summaryze the data.", "blue")}`
 
 4. What does the following R code do?
 ```{r histbyrace, echo=TRUE}
@@ -176,6 +178,7 @@ white = subset(birthwt, race==1)
 hist(white$age, main="Distribution of age of white women", 
      xlab="age", ylab="Frequency", col="lightblue")
 ```
+`r if(solution){colFmt("This histogram represents the distribution of ages of the white women.", "blue")}` 
 
 5. Follow the above example to visualize the distribution of age among the other racial group. Comment on the different graphs.
 ```{r histbyrace2}
@@ -187,6 +190,7 @@ other = subset(birthwt, race==3)
 hist(other$age, main="Distribution of age of other women", 
      xlab="age", ylab="Frequency", col="lightblue")
 ```
+`r if(solution){colFmt("We note that the shapes of the histograms varies according to the racial group. The back women seem younger than the 2 other groups. BUt that has to be statistitically tested to be confirmed.", "blue")}`
 
 6. Using the `subset()` and `plot()` functions, plot `age` versus `lwt` in "non-smoking" and "smoking" mothers. Comment the results.
 ```{r scattercompare}
@@ -195,31 +199,40 @@ nonsmoker = subset(birthwt, smoke==0)
 plot(smoker$age, smoker$lwt, xlab = "Age of Smoking mothers", ylab = "mother's weight", xlim=c(10,45), ylim=c(0,250))
 plot(nonsmoker$age, nonsmoker$lwt, xlab = "Age of Non-smoking mothers", ylab = "mother's weight", xlim=c(10,45), ylim=c(0,250))
 
-## Advance plot: every thing in the same plot
+## Advanced plot: every thing in the same plot
 plot(smoker$age, smoker$lwt, xlab = "Age of Smoking mothers", ylab = "mother's weight", 
      xlim=c(10,45), ylim=c(0,250))
 points(nonsmoker$age, nonsmoker$lwt, col="red")
 legend(25, 50,c("smoking","non-smoking"), pch=19, col = 1:2)
 ```
+`r if(solution){colFmt("It seems that there is no specific difference between the smoking and non-smoking as far as the relation between mother's weight and age are concerned. It  also looks like there is no relation between mother's weight and age. But again we are just describing the observed data. We should perform some statistical test to conclude.", "blue")}`
 
 7. Use the `boxplot()` function to represent the distribution of baby weight in the different racial group.
 ```{r boxplotRace}
 boxplot(bwt ~ race, data=birthwt, main="Distribution of baby weight by racial group")
 ```
-
+`r if(solution){colFmt("The inter-quartile range (IQR) and dipersion of the values are smaller in the black group but the median seems relatively close (~3000g).", "blue")}`
 
 8. Use the `boxplot()` function to represent the distribution of baby weight in the smoking and non-smoking groups of women.
 ```{r boxplotSmoke}
 boxplot(bwt ~ smoke, data=birthwt, main="Distribution of baby weight by women's smoking status")
 ```
+`r if(solution){colFmt("The median of the baby's weight seems lower in the smoking group that in the non-smoking group. We can make the hypothesis that there is an association between the smoking status and the baby's weight.", "blue")}`
 
-```{r proprace, eval=T, echo=F}
-proprace=prop.table(table(birthwt$race))
-names(proprace)=c("white", "black", "other")
+
+```{r pierace, echo=F, eval=T}
+# If you want to compute the proportion
+propRace=prop.table(table(birthwt$race))
+names(propRace)=c("white", "black", "other")
 ```
-9. The proportion of mothers in each "race" is `r paste0(round(proprace[1]*100,0),"%")` for white, `r paste0(round(proprace[2]*100,0),"%")` for black, and `r paste0(round(proprace[3]*100,0),"%")` for others. Represent these proportions as a pie chart, using the `pie()` command.
-```{r pierace}
+
+9. The proportion of mothers in each "race" is `r paste0(round(propRace[1]*100,0),"%")` for white, `r paste0(round(propRace[2]*100,0),"%")` for black, and `r paste0(round(propRace[3]*100,0),"%")` for others. Represent these proportions as a pie chart, using the `pie()` command.
+```{r pie}
 pie(c(0.51,0.14,0.35), labels = c("white 51%", "black 14%", "others 35%"))
+
+# If you want to compute the proportion
+propRace=prop.table(table(birthwt$race))
+names(propRace)=c("white", "black", "other")
 ```
 
 ## 5. Absolute frequency and proportion
@@ -231,12 +244,16 @@ Answer by TRUE or FALSE to the following questions:
 smoke2race = table(birthwt$smoke, birthwt$race)
 prop.table(smoke2race, margin=1)
 ```
+`r if(solution){colFmt("FALSE, among the smoking mothers we count 16% in the other races.", "blue")}`
 
 2. Among the "other" race group, most mothers smoke.
 ```{r table col}
 prop.table(smoke2race, margin=2)
 ```
+`r if(solution){colFmt("FALSE, with the other races group, 18% smoke while 82% do not smoke.", "blue")}`
+
 3. There is a significant association between the racial group of the mother and her smoking status during pregnancy. 
+`r if(solution){colFmt("FALSE, we can not conclude. We can make the hypothesis that there are differences between racial group and the smoking status but a statistical test has to be perform to reach some conclusion.", "blue")}`
 
 ## 6. Discretisation
 
@@ -244,6 +261,7 @@ prop.table(smoke2race, margin=2)
 ```{r summary}
 summary(birthwt$lwt)
 ```
+`r if(solution){colFmt("The summary() function is usefull if your variable in coded with the right type. Becareful of a quantitative variable stored as interger in R. R will thus compute mean or median but it will be meaningless. We will learn how to transform this type of variable into factors.", "blue")}`
 
 2. Use the `cut()` function to categorize the mother's weight variable into 3 groups. Justify your choice of intervals.
 ```{r discretisation}
@@ -254,6 +272,7 @@ lwtgroup1 = cut(birthwt$lwt, c(80,115,132,251), right=F)
 # using apriori "physiological" knowledge 
 lwtgroup2 = cut(birthwt$lwt, c(80, 110, 200, 251), right=F)
 ```
+`r if(solution){colFmt("The splitting criterion might be arbitrary with equal intervals or based on scientific knowledge, for instance following some international standard allowing comparison or based on physiological/medical issues. ", "blue")}`
 
 3. Build a two-way table to describe the proportion of the different racial groups in each of your mother's weight category. Discuss the results.
 ```{r}
@@ -263,6 +282,7 @@ prop.table(groupTercile, margin=2)
 groupPhy = table(lwtgroup2, birthwt$race)
 prop.table(groupPhy, margin=2)
 ```
+`r if(solution){colFmt("The splitting criterion is critical and must be justified as it impacts the results. ", "blue")}`
 
 4. Similarly build a two-way table to describe the proportion of low birth weight children in each of your mother's weight category. Discuss the results.
 ```{r}
@@ -272,4 +292,7 @@ prop.table(lwt2bwt33, margin=2)
 lwt2bwtPhy = table(lwtgroup2, birthwt$low)
 prop.table(lwt2bwtPhy, margin=2)
 ```
+`r if(solution){colFmt("Same as above ", "blue")}`
+
+
 5. Class discussion
