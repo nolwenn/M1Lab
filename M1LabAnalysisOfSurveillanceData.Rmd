@@ -47,8 +47,10 @@ scabies<-read.csv2(file="RawdataScabiesDrugs.csv")
 ```
 
 Try ?ts to get information on how to create a R timeserie. Then create two from previously loaded data: one for oral and one for topical drugs.
-```{r ts}
+```{r ts, echo=T}
 tsOral=ts(scabies$O, frequency = 52, start=c(2007,1))
+```
+```{r ts2}
 tsTopical=ts(scabies$T, frequency = 52, start=c(2007,1))
 ```
 
@@ -82,6 +84,11 @@ Just from the plot, note the differences and similarities between the two timese
 We do not have population or localization data associated with the time series, consequently we cannot proceed further the description.
 
 ##E. Decompose
+
+###Use the ma() function like below to compute and plot moving averages with a window of 4 weeks, 12 weeks and 52 weeks.
+```{r ma, echo=T}
+plot(ma(tsOral, order = 4))
+```
 ###Decompose the two timeseries and compare the results in terms of trends and seasonality (use decompose() and plot()). What do you notice ?
 
 ```{r decompose}
