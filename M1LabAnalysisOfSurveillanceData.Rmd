@@ -19,7 +19,7 @@ solution <- FALSE
 * Interpret the analysis.
 
 
-This lab is split in two parts. First we are going to analyze, step by step, a time serie of sales of drugs specific to scabies. Second, you'll use the same methodology to analyse influenza like illness time series in France between 2010 and 2016. 
+This lab is split in two parts. First we are going to analyze, step by step, a time serie of sales of drugs specific to scabies. Second, you'll use the same methodology to analyse influenza like illness time series in France between 2008 and 2016. 
 
 #0. Install libraries
 
@@ -39,6 +39,8 @@ In groups of 5, read the article but do not focus too much on the statistical de
 
 
 #2. Scabies
+You are going to use a data set of drug sales. The file report weekly number of sales extrapolated to France. Sales are standardised to one treatment unit for an "average person". The drugs are separated between "topical treatment" and "oral treatment". All drugs included are almost exclusively used against scabies. Some are used against relatively rare disease as well. The dose (and the quantity of boxes) to use depends on the weight of the patient, on the duration of the prescribed treatment which can change depending on the GP, and on whether the patient is a case or just a contact with a case (prophylactic use). Data come from a sample of 3000 pharmacies in France but we do not know the representativity of the sample. Data is automatically collected through stock management software from the pharmacies.
+
 ##A. Loading and formatting data 
 Use the function read.csv() to load the data from the file "RawdataScabiesDrugs.csv".
 Make sure that you used the right format (are you using the right field separator ?).
