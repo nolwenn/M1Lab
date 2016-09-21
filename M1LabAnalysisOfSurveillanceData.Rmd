@@ -1,0 +1,122 @@
+
+---
+title: 'Lab: Analysis of surveillance data'
+author: "Nolwenn Le Meur & Pascal Crepey"
+date: "20 September 2016"
+output: pdf_document
+---
+
+```{r include=FALSE}
+knitr::opts_chunk$set(eval=F, echo=F)
+solution <- FALSE
+
+```
+
+
+##Objectives: 
+* Describe a timeserie about the surveillance of a disease.
+* Use the appropriate tools to analyze it. 
+* Interpret the analysis.
+
+
+This lab is split in two parts. First we are going to analyze, step by step, a time serie of sales of drugs specific to scabies. Second, you'll use the same methodology to analyse influenza like illness time series in France between 2010 and 2016. 
+
+#0. Install libraries
+
+```{r eval=F, echo=T}
+install.packages("surveillance")
+install.packages("forecast")
+```
+```{r eval=F, echo=T}
+library("surveillance")
+library("forecast")
+```
+
+#1. Critical reading of a timeserie analysis
+Download from Real the article "Using Google Flu Trends data in forecasting influenza-like illness related ED visits in Omaha, Nebraska" from Ozgur M. Araz, Dan Bentley, and Robert L. Muelleman (arzaz_etal.pdf).
+
+In groups of 5, read the article but do not focus too much on the statistical details of the methods. Prepare answers to the "preliminary steps of surveillance data".
+
+
+#2. Scabies
+##A. Loading and formatting data 
+Use the function read.csv() to load the data from the file "RawdataScabiesDrugs.csv".
+Make sure that you used the right format (are you using the right field separator ?).
+```{r load}
+scabies<-read.csv2(file="RawdataScabiesDrugs.csv")
+```
+
+Try ?ts to get information on how to create a R timeserie. Then create two from previously loaded data: one for oral and one for topical drugs.
+```{r ts}
+tsOral=ts(scabies$O, frequency = 52, start=c(2007,1))
+tsTopical=ts(scabies$T, frequency = 52, start=c(2007,1))
+```
+
+##B. Plot data
+```{r plot}
+plot(scabies$O,type="l")
+plot(scabies$T,type="l")
+```
+
+##C. Proceed with the preliminary steps described in the lecture
+###1. Evaluate the surveillance system. What are its advantages ? What are its limits ?
+###2. Describe the kind of collected data. What do you see in the data ?
+###3. Assess quality of data. Is it noisy ? Do you notice trivial mistakes ? etc...
+
+##D. Describe the data in terms of time
+###Which time window is better suited ?
+
+Try ?aggregate to change the time unit of your data. Compare the current timescale with a quaterly and a yearly timescale. Comment.
+
+```{r aggregate}
+
+plot(aggregate(tsTopic, nfrequency = 4), col="red")
+plot(aggregate(tsOral, nfrequency = 1), col="red")
+
+```
+
+###Compare the oral drug sales and to topical drug sales time serie.
+Just from the plot, note the differences and similarities between the two timeseries.
+
+
+We do not have population or localization data associated with the time series, consequently we cannot proceed further the description.
+
+##E. Decompose
+###Decompose the two timeseries and compare the results in terms of trends and seasonality (use decompose() and plot()). What do you notice ?
+
+```{r decompose}
+decO=decompose(tsOral)
+decT=decompose(tsTopic)
+```
+###Try to do the same thing with stl()
+
+```{r decomposestl}
+decOs=stl(tsOral, s.window="periodic")
+decTs=stl(tsTopic, s.window="periodic")
+```
+
+##F. Predict
+ARIMA models are a family of models specifically designed to analyze timeseries. In case of seasonality in the timeseries, they are even able to reproduce it.
+In the forecast library, the function auto.arima() will automatically select the best ARIMA model.
+
+```{r arima}
+fitO=auto.arima(tsOral, trace=T)
+fitT=auto.arima(tsTopic, trace=T)
+```
+Once the model is selected and stored in a variable, you can then input it in the forecast function. The parameter "h" sets the number of time unit you want to forecast. Plot the results of a one year forecast for the two models and interpret the results.
+```{r forecast}
+plot(forecast(fitO, h=52))
+plot(forecast(fitT, h=52))
+```
+
+#3. Influenza like illness (at home)
+The ILI.csv file is an extraction from the French Sentinelles network website. Browse the website (https://websenti.u707.jussieu.fr/sentiweb/?lang=en) to get more information about the data (influenza like illness surveillance). 
+Then follow the steps previously applied to perform an analysis of the data.
+
+```{r loadILI}
+ILI=read.csv2(file = "ILIData.csv")
+
+plot(decompose(tsILI))
+
+plot(stl(tsILI, s.window="periodic"))
+```
