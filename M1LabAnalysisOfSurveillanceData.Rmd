@@ -58,8 +58,8 @@ tsTopical=ts(scabies$T, frequency = 52, start=c(2007,1))
 
 ##B. Plot data
 ```{r plot}
-plot(scabies$O,type="l")
-plot(scabies$T,type="l")
+plot(tsOral,type="l")
+plot(tsTopical,type="l")
 ```
 
 ##C. Proceed with the preliminary steps described in the lecture
@@ -74,7 +74,9 @@ Try ?aggregate to change the time unit of your data. Compare the current timesca
 
 ```{r aggregate}
 
+
 plot(aggregate(tsTopical, nfrequency = 4), col="red", type="h")
+
 plot(aggregate(tsOral, nfrequency = 1), col="red")
 
 ```
