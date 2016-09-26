@@ -1,0 +1,101 @@
+---
+title: 'Lab 2.2: Confidence Interval'
+author: "Nolwenn Le Meur & Pascal Crepey"
+date: "September, 27-28 2016"
+output: pdf_document
+---
+
+```{r include=FALSE}
+knitr::opts_chunk$set(eval=F, echo=F)
+solution <- FALSE
+
+
+```
+
+```{r correction, eval=T, echo=F, include=F}
+#Color Format
+colFmt = function(x,color){
+  outputFormat = knitr::opts_knit$get("rmarkdown.pandoc.to")
+  if(outputFormat == 'latex')
+    paste("\\textcolor{",color,"}{",x,"}",sep="")
+  else if(outputFormat == 'html')
+    paste("<font color='",color,"'>",x,"</font>",sep="")
+  else
+    x
+}
+```
+
+
+Objectives:
+* Interpret confidence interval of a mean or proportion
+* Compute and plot confidence interval of a mean or proportion
+
+You are interest in risk factors associated with low infant birth weight. You are given the  _birthwt_ dataset, which is composed of 189 women (rows) and 10 variables (columns). The data were collected at Baystate Medical Center, Springfield, Mass during 1986. 
+
+1. Is it an exhaustive collection?
+2. Are we representative ? Justify.
+
+As the conclusion you will draw from your analysis will be at the population level, you need to describe the data in that sense. You want to get an idea of the true mean of baby's weight at birth in your population of interest.
+
+3. What should you compute ?
+4. What does the code below do? Make a sentence to explicit the results.
+
+```{r ci mean, echo=T}
+library(MASS)
+data(birthwt)
+mean(birthwt$bwt)-1.96*sd(birthwt$bwt)/sqrt(189)
+mean(birthwt$bwt)+1.96*sd(birthwt$bwt)/sqrt(189)
+```
+`r if(solution){colFmt("After loading the birthw data, it computes the lower and upper limits of the confidence interval at 95% where the "true" mean of the unknown population stands (with 5% error rate). The sd(birthwt$bwt)/sqrt(189) represents the standard error (se). se is the estimated standard deviation of the unknown population.", "blue")}`
+
+5. What happens if 1.96 is replaced by 2.57? 
+6. Are you more confident or more precise on the results?
+7. What does the code below?
+```{r pnorm, echo=T}
+pnorm(1.96)
+pnorm(2.57)
+```
+
+```{r ci}
+# For lazy/smart users:
+# install epiDisplay library for good
+# install.packages("epiDisplay")
+# Loading library each time you want to use it
+library(epiDisplay)
+# compte 95% confidence interval
+ci(birthwt$bwt, alpha=0.05)
+# compte 99% confidence interval
+ci(birthwt$bwt, alpha=0.01)
+```
+
+Similarly, you want to assess the proportion of smoking women in your population. 
+
+8. Using the ci() function of the _epiDisplay_ package, compute the 95% confidence interval of the proportion of smoking women. Make a sentence to explicit the results.
+```{r ci binomial, message=FALSE}
+library(epiDisplay)
+ci(birthwt$smoke)
+```
+
+You wish you were more accurate in your estimation. When "your" statistician compute the sample size, he used the code below. According to the results you selected 2 times the number of women thinking you would get a delta of 0.05. Were you right?
+```{r ci binomial, message=FALSE}
+n.for.survey(0.4, delta=0.1)
+```
+
+```{r ci binomial, message=FALSE}
+n.for.survey(0.4, delta=0.05)
+```
+
+# Homework
+As for the confidence interval of the mean baby's weight, try to compute the proportion of smoking women without the help of the ci() function but the formula from the course.
+```{r ci proportion}
+# get the proportion of smoking women
+prop.table(table(birthwt$smoke))
+0.39-1.96*sqrt((0.39*0.64)/189)
+0.39+1.96*sqrt((0.39*0.64)/189)
+
+## OR with mean(), it works here because smoke is a binary variable coded as integer in R
+mean(birthwt$smoke)
+mean(birthwt$smoke)+1.96*sqrt(mean(birthwt$smoke)*(1-mean(birthwt$smoke))/189)
+mean(birthwt$smoke)-1.96*sqrt(mean(birthwt$smoke)*(1-mean(birthwt$smoke))/189)
+```
+
