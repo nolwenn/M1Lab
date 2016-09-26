@@ -27,6 +27,7 @@ colFmt = function(x,color){
 
 
 Objectives:
+
 * Interpret confidence interval of a mean or proportion
 * Compute and plot confidence interval of a mean or proportion
 
@@ -70,7 +71,7 @@ ci(birthwt$bwt, alpha=0.01)
 
 Similarly, you want to assess the proportion of smoking women in your population. 
 
-8. Using the ci() function of the _epiDisplay_ package, compute the 95% confidence interval of the proportion of smoking women. Make a sentence to explicit the results.
+8. Using the ci() function from the _epiDisplay_ package, compute the 95% confidence interval of the proportion of smoking women in the population. Make a sentence to explicit the results.
 ```{r ci binomial, message=FALSE}
 library(epiDisplay)
 ci(birthwt$smoke)
@@ -85,8 +86,14 @@ n.for.survey(0.4, delta=0.1)
 n.for.survey(0.4, delta=0.05)
 ```
 
+9. From the previous lab session (section 5), you know that there seem to be differences in the distribution of smoking women between races. Compute the 95% confidence interval of the proportion of smoking women by race group. Can you conclude on your hypotheses?
+```{r ci binomial, message=FALSE}
+library(epiDisplay)
+by(birthwt$smoke, birthwt$race , ci)
+```
+
 # Homework
-As for the confidence interval of the mean baby's weight, try to compute the proportion of smoking women without the help of the ci() function but the formula from the course.
+As for the confidence interval of the mean baby's weight, try to compute 95% CI of the proportion of smoking women in the epopulation, without the help of the ci() function but the formula from the course.
 ```{r ci proportion}
 # get the proportion of smoking women
 prop.table(table(birthwt$smoke))
