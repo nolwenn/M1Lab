@@ -74,7 +74,7 @@ Try ?aggregate to change the time unit of your data. Compare the current timesca
 
 ```{r aggregate}
 
-plot(aggregate(tsTopic, nfrequency = 4), col="red")
+plot(aggregate(tsTopical, nfrequency = 4), col="red", type="h")
 plot(aggregate(tsOral, nfrequency = 1), col="red")
 
 ```
