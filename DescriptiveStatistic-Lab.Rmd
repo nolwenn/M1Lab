@@ -2,10 +2,10 @@
 title: 'Lab 1: Descriptive Analysis'
 author: "Nolwenn Le Meur & Pascal Crepey"
 date: "September, 13-14 2016"
-output: html_document
+output: pdf_document
 ---
 ```{r include=FALSE}
-knitr::opts_chunk$set(eval=T, echo=T)
+knitr::opts_chunk$set(eval=F, echo=F)
 solution <- FALSE
 
 
