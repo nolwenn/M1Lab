@@ -29,15 +29,29 @@ Objectives:
 * Interpret confidence interval of a mean or proportion
 * Compute and plot confidence interval of a mean or proportion
 
-You are interest in risk factors associated with low infant birth weight. You are given the  _birthwt_ dataset, which is composed of 189 women (rows) and 10 variables (columns). The data were collected at Baystate Medical Center, Springfield, Mass during 1986. 
+You are interested in risk factors associated with low infant birth weight. You are given the  _birthwt_ dataset, which is composed of 189 women (rows) and 10 variables (columns). The data were collected at Baystate Medical Center, Springfield, Mass during 1986. 
 
 1. Is it an exhaustive collection?
+
+`r if(solution){colFmt("We have to assume that at minimum the population of interest is the population of mothers who had babies at the Baystate Medical Center, and it s very likely that there were more women than 189, it s also likely that the population of interest are mothers from Springfield, Mass. So, no, it s not exhaustive, it s a sample.", "blue")}`
+
 2. Are we representative ? Justify.
+
+`r if(solution){colFmt("If research question cares about this medical center, then probably yes. If research question concerns all women who gave birth in Mass. in 1986, we are not representative because for instance the women who gave birth in that medical center are socio-economically different from the women that gave birth elsewhere.", "blue")}`
 
 # 1. Distribution of birth weight
 The conclusion you will draw from your analysis will be at the population level, thus you need to describe the data in that sense. You want to estimate the TRUE mean of babys' weight at birth in your population of interest.
 
 3. What should you compute?
+
+`r if(solution){colFmt("It actually depends on the the study population. For example, if there is not social biases in recruitment in that particular medical center we may say that our sample is representative of mothers in Springfield. If the population of Springfield is representative of the Mass. population, then it is possible that our conclusions apply for the whole state.", "blue")}`
+
+As the conclusion you will draw from your analysis will be at the population level, you need to describe the data in that sense. You want to get an idea of the true mean of baby's weight at birth in your population of interest.
+
+3. What should you compute ?
+
+`r if(solution){colFmt("Confidence intervals for the mean weight of babies.", "blue")}`
+
 4. What does the code below do? Make a sentence to explicit the results.
 
 ```{r ci load, echo=T, eval=T}
@@ -45,14 +59,29 @@ library(MASS)
 data(birthwt)
 ```
 
+
 ```{r ci mean, echo=T}
 mean(birthwt$bwt) - 1.96*sd(birthwt$bwt)/sqrt(189)
 mean(birthwt$bwt) + 1.96*sd(birthwt$bwt)/sqrt(189)
 ```
-`r if(solution){colFmt("After loading the birthw data, it computes the 95% confidence interval  where the TRUE mean of the unknown population would stands if the experiment was repeated. The right part of the equation represents the standard error (se). se is the estimated standard deviation of the unknown population.", "blue")}`
+
+`r if(solution){colFmt("After loading the birthw data, it computes the 95 confidence interval  where the TRUE mean of the unknown population would stands if the experiment was repeated. The right part of the equation represents the standard error (se). se is the estimated standard deviation of the unknown population.", "blue")}`
 
 5. What does happen if 1.96 is replaced by 2.57? Are you more confident or more precise on your results?
 6. What does the code below do?
+
+`r if(solution){colFmt("After loading the birthw data, it computes the lower and upper limits of the confidence interval at 95 where the true mean of the unknown population stands (with 5 error rate).", "blue")}`
+
+5. What happens if 1.96 is replaced by 2.57? 
+
+`r if(solution){colFmt("We increase the confidence level which as a consequence widen the confidence intervals.", "blue")}`
+
+6. Are you more confident or more precise on the results?
+
+`r if(solution){colFmt("I am more confident but less accurate.", "blue")}`
+
+7. What does the code below?
+
 ```{r pnorm, echo=T}
 pnorm(1.96)
 pnorm(2.57)
@@ -74,27 +103,43 @@ ci(birthwt$bwt, alpha=0.01)
 Next, you want to assess the proportion of smoking women in your population. 
 
 7. Using the ci() function from the _epiDisplay_ package, compute the 95% confidence interval of the proportion of smoking women in the population. Make a sentence to explicit the results.
+
 ```{r load epidisplay, echo=F, eval = T, message=FALSE}
 library(epiDisplay)
 ```
+
 
 ```{r ci binomial, message=FALSE}
 ci(birthwt$smoke)
 ```
 
-8. You wish you were more accurate in your estimation. When "your" statistician compute the sample size, he used the code below. According to his results you choose to study twice the number of women, thinking you would get a delta (precision) of 0.05. Were you right?
+8. You wish you were more accurate in your estimation. When your statistician compute the sample size, he used the code below. According to his results you choose to study twice the number of women, thinking you would get a delta (depending of your optimism delta = precision = margin error = Z.SE) of 0.05. Were you right?
+
 ```{r ci n1, echo=T, message=FALSE}
 n.for.survey(0.4, delta=0.1)
 ```
 
+
 ```{r ci n2, message=FALSE}
 n.for.survey(0.4, delta=0.05)
+1.96*sqrt(0.4*0.6)/sqrt(369) #check our delta
+1.96*sqrt(0.4*0.6)/sqrt(92*4) #because delta/2, need to multiply by 2^2
 ```
 
 9. From the previous lab session (section 5), you know that there seems to be differences in the distribution of smoking women between races. The code below computes and plots the 95% confidence interval of the proportion of smoking women by race group. Can you conclude on your hypotheses?
+
 ```{r ci race, echo=T, eval=T}
 by(birthwt$smoke, birthwt$race , ci)
 aggregate.plot(x=birthwt$smoke, by=list("Race"=birthwt$race), error="ci")
+```
+
+`r if(solution){colFmt("Note that the result of the aggregate plot is not perfect. I could not find a quick R command to display the sample proportion and the associated CI. Ideally we would like a ponctual value for the proportion in the sample and not a bar as the plot below.", "blue")}`
+
+```{r ci racePlot, echo=F, eval=T, message=FALSE}
+library(ggplot2)
+stat = data.frame(do.call("rbind",by(birthwt$smoke, birthwt$race , ci)), "race"=c("white","black","other"))
+p <- ggplot(stat, aes(y=mean, x=race))
+p + geom_point() + geom_errorbar(aes(ymin=mean-se, ymax=mean+se), width=0.2)
 ```
 
 # Homework
@@ -102,8 +147,19 @@ aggregate.plot(x=birthwt$smoke, by=list("Race"=birthwt$race), error="ci")
 ```{r ci proportion}
 # get the proportion of smoking women
 prop.table(table(birthwt$smoke))
-0.39-1.96*sqrt((0.39*0.64)/189)
-0.39+1.96*sqrt((0.39*0.64)/189)
+p=0.3915344 
+# proportion of non-smoking women
+q=1-p
+# size of the sample
+n=189
+# Statistical parameter for a alpha risk of 5% (or 95%IC)
+z=1.96
+# standard error 
+standardDev = p*q
+se = sqrt(p*q/n)
+## 95CI
+p - z*se
+p + z*se
 
 ## OR with mean(), it works here because smoke is a binary variable coded as integer in R
 mean(birthwt$smoke)

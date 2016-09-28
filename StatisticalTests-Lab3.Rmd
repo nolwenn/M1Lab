@@ -33,7 +33,7 @@ colFmt = function(x,color){
 * Compute and interpret statistical tests of a mean
 * Compute and interpret statistical tests of a proportion
 
-You are interest *still* in risk factors associated with low infant birth weight. You are given the  _birthwt_ dataset, which is composed of 189 women (rows) and 10 variables (columns). The data were collected at Baystate Medical Center, Springfield, Mass during 1986. 
+You are interested *still* in risk factors associated with low infant birth weight. You are given the  _birthwt_ dataset, which is composed of 189 women (rows) and 10 variables (columns). The data were collected at Baystate Medical Center, Springfield, Mass during 1986. 
 
 ##1. Hypothesis
 
@@ -91,3 +91,6 @@ pnorm(z)
 
 # Homework
 ```
+
+
+##2. Performing statistical tests to compare frequencies
