@@ -1,6 +1,6 @@
 ---
 title: "Lab 3: Statistical tests"
-author: "Nolwenn Le Meur & Pascal Cr??pey"
+author: "Nolwenn Le Meur & Pascal Crepey"
 date: "27 September 2016"
 output: pdf_document
 ---
@@ -33,7 +33,7 @@ colFmt = function(x,color){
 * Compute and interpret statistical tests of a mean
 * Compute and interpret statistical tests of a proportion
 
-You are interest *still* in risk factors associated with low infant birth weight. You are given the  _birthwt_ dataset, which is composed of 189 women (rows) and 10 variables (columns). The data were collected at Baystate Medical Center, Springfield, Mass during 1986. 
+You are *still* interested in risk factors associated with low infant birth weight. You are given the  _birthwt_ dataset, which is composed of 189 women (rows) and 10 variables (columns). The data were collected at Baystate Medical Center, Springfield, Mass during 1986. 
 
 ##1. Hypothesis
 
