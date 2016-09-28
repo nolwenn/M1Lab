@@ -1,0 +1,39 @@
+---
+title: 'Lab 3: Statistical test'
+author: "Nolwenn Le Meur"
+date: "28 September 2016"
+output: html_document
+---
+
+```{r include=FALSE}
+knitr::opts_chunk$set(eval=F, echo=F)
+solution <- FALSE
+
+
+```
+
+```{r correction, eval=T, echo=F, include=F}
+#Color Format
+colFmt = function(x,color){
+  outputFormat = knitr::opts_knit$get("rmarkdown.pandoc.to")
+  if(outputFormat == 'latex')
+    paste("\\textcolor{",color,"}{",x,"}",sep="")
+  else if(outputFormat == 'html')
+    paste("<font color='",color,"'>",x,"</font>",sep="")
+  else
+    x
+}
+```
+
+
+Objectives:
+
+* Formulate statistical hypotheses
+* Compare sample means and proportion
+* Interpreter test results
+
+You are interest in risk factors associated with low infant birth weight. You are given the  _birthwt_ dataset, which is composed of 189 women (rows) and 10 variables (columns). The data were collected at Baystate Medical Center, Springfield, Mass during 1986. 
+
+1. Formulate the different hypotheses between the outcome and the different risk factors
+2. What test do you use to verify each hypothese?
+3 
