@@ -1,0 +1,93 @@
+---
+title: "Lab 3: Statistical tests"
+author: "Nolwenn Le Meur & Pascal Cr??pey"
+date: "27 September 2016"
+output: pdf_document
+---
+
+
+```{r include=FALSE}
+knitr::opts_chunk$set(eval=F, echo=F)
+solution <- F
+
+
+```
+
+```{r correction, eval=T, echo=F, include=F}
+#Color Format
+colFmt = function(x,color){
+  outputFormat = knitr::opts_knit$get("rmarkdown.pandoc.to")
+  if(outputFormat == 'latex')
+    paste("\\textcolor{",color,"}{",x,"}",sep="")
+  else if(outputFormat == 'html')
+    paste("<font color='",color,"'>",x,"</font>",sep="")
+  else
+    x
+}
+```
+
+
+#Objectives:
+
+* Define hypothesis to be tested
+* Compute and interpret statistical tests of a mean
+* Compute and interpret statistical tests of a proportion
+
+You are interest *still* in risk factors associated with low infant birth weight. You are given the  _birthwt_ dataset, which is composed of 189 women (rows) and 10 variables (columns). The data were collected at Baystate Medical Center, Springfield, Mass during 1986. 
+
+##1. Hypothesis
+
+###1.1 We suspect that age, race, and smoking status may have a role to play in the low birth weight of newborns. Define the H0 (nil hypothesis) necessary to study the impact of each of these variables on babies's weight separately.
+
+`r if(solution){colFmt("", "blue")}`
+
+###1.2 Define the H1 (alternative hypothesis) necessary to study the impact of each of these variables on babies's weight separately.
+
+`r if(solution){colFmt("", "blue")}`
+
+##2. Performing statistical tests to compare means
+
+###2.1 Compute 95% confidence intervals of birth weigths of babies born from smoking and non-smoking women. You can use _subset_ from the first lab to split the data.  
+```{r ci} 
+smoker = subset(birthwt, smoke==1)
+nonsmoker = subset(birthwt, smoke==0)
+ci(smoker$bwt)
+ci(nonsmoker$bwt)
+#or 
+
+ci(birthwt$bwt[birthwt$smoke==1])
+ci(birthwt$bwt[birthwt$smoke==0])
+```
+
+###2.2 From the previous results, do you think the statistical test will show a statistically significant results and why ?
+
+`r if(solution){colFmt("Although the two intervals overlap, the overlaping area is very small. The probability that the true value is in this small area is small, potentially lower than 0.05.", "blue")}`
+
+###2.3 Compute the z test seen in class by first computing m1, m2, sd1, sd2, (and n1, n2). You can use pnorm to compute your p value. $(z=(m_1 - m_2)/\sqrt{s_1^2/n_1 + s_2^2/n_2}$
+
+```{r ztest} 
+m1=mean(birthwt$bwt[birthwt$smoke==1])
+m2=mean(birthwt$bwt[birthwt$smoke==0])
+sd1=sd(birthwt$bwt[birthwt$smoke==1])
+sd2=sd(birthwt$bwt[birthwt$smoke==0])
+n1=length(birthwt$bwt[birthwt$smoke==1])
+n2=length(birthwt$bwt[birthwt$smoke==0])
+
+z=abs(m1-m2)/sqrt((sd1^2)/n1 + (sd2^2)/n2)
+pnorm(z)
+```
+
+###2.4 Do the same thing but now use the t.test() function and compare the results with the z test. Look up for the conditions of applications and decide which test to use.
+
+###2.5 Do the same thing for white mothers and black mothers (race 1 & 2), interpret and conclude.
+
+`r if(solution){colFmt("", "blue")}`
+
+```{r comments}
+##3. Performing statistical tests to compare proportions
+
+`r if(solution){colFmt("", "blue")}`
+
+
+# Homework
+```
