@@ -7,7 +7,9 @@ output: pdf_document
 
 ```{r include=FALSE}
 knitr::opts_chunk$set(eval=F, echo=F)
+
 solution <- FALSE
+
 ```
 
 ```{r correction, eval=T, echo=F, include=F}
@@ -37,6 +39,7 @@ You are interested in risk factors associated with low infant birth weight. You 
 
 2. Are we representative ? Justify.
 
+<<<<<<< HEAD
 `r if(solution){colFmt("If research question cares about this medical center, then probably yes. If research question concerns all women who gave birth in Mass. in 1986, we are not representative because for instance the women who gave birth in that medical center are socio-economically different from the women that gave birth elsewhere.", "blue")}`
 
 # 1. Distribution of birth weight
@@ -45,12 +48,23 @@ The conclusion you will draw from your analysis will be at the population level,
 3. What should you compute?
 
 `r if(solution){colFmt("It actually depends on the the study population. For example, if there is not social biases in recruitment in that particular medical center we may say that our sample is representative of mothers in Springfield. If the population of Springfield is representative of the Mass. population, then it is possible that our conclusions apply for the whole state.", "blue")}`
+=======
+`r if(solution){colFmt("
+It actually depends on the the study population. For example, if there is not social biases in recruitment in that particular medical center we may say that our sample is representative of mothers in Springfield. If the population of Springfield is representative of the Mass. population, then it is possible that our conclusions apply for the whole state.
+", "blue")}`
+>>>>>>> bfec83915cd38630bc5f1f01f585afb0561c9b78
 
 As the conclusion you will draw from your analysis will be at the population level, you need to describe the data in that sense. You want to get an idea of the true mean of baby's weight at birth in your population of interest.
 
 3. What should you compute ?
 
+<<<<<<< HEAD
 `r if(solution){colFmt("Confidence intervals for the mean weight of babies.", "blue")}`
+=======
+`r if(solution){colFmt("
+Confidence intervals for the mean weight of babies.
+", "blue")}`
+>>>>>>> bfec83915cd38630bc5f1f01f585afb0561c9b78
 
 4. What does the code below do? Make a sentence to explicit the results.
 
@@ -59,6 +73,7 @@ library(MASS)
 data(birthwt)
 ```
 
+<<<<<<< HEAD
 
 ```{r ci mean, echo=T}
 mean(birthwt$bwt) - 1.96*sd(birthwt$bwt)/sqrt(189)
@@ -80,6 +95,19 @@ mean(birthwt$bwt) + 1.96*sd(birthwt$bwt)/sqrt(189)
 
 `r if(solution){colFmt("I am more confident but less accurate.", "blue")}`
 
+=======
+`r if(solution){colFmt("After loading the birthw data, it computes the lower and upper limits of the confidence interval at 95 where the true mean of the unknown population stands (with 5 error rate). The sd(birthwt bwt)/sqrt(189) represents the standard error (se). se is the estimated standard deviation of the unknown population.", "blue")}`
+
+5. What happens if 1.96 is replaced by 2.57? 
+`r if(solution){colFmt("
+We increase the confidence level which as a consequence widen the confidence intervals.
+", "blue")}`
+
+6. Are you more confident or more precise on the results?
+`r if(solution){colFmt("
+I am more confident but less accurate.
+", "blue")}`
+>>>>>>> bfec83915cd38630bc5f1f01f585afb0561c9b78
 7. What does the code below?
 
 ```{r pnorm, echo=T}
@@ -108,6 +136,7 @@ Next, you want to assess the proportion of smoking women in your population.
 library(epiDisplay)
 ```
 
+<<<<<<< HEAD
 
 ```{r ci binomial, message=FALSE}
 ci(birthwt$smoke)
@@ -121,6 +150,14 @@ n.for.survey(0.4, delta=0.1)
 
 
 ```{r ci n2, message=FALSE}
+=======
+You wish you were more accurate in your estimation. When "your" statistician compute the sample size, he used the code below. According to the results you selected 2 times the number of women thinking you would get a delta of 0.05. Were you right?
+```{r ci binomial2, message=FALSE}
+n.for.survey(0.4, delta=0.1)
+```
+
+```{r ci binomial3, message=FALSE}
+>>>>>>> bfec83915cd38630bc5f1f01f585afb0561c9b78
 n.for.survey(0.4, delta=0.05)
 1.96*sqrt(0.4*0.6)/sqrt(369) #check our delta
 1.96*sqrt(0.4*0.6)/sqrt(92*4) #because delta/2, need to multiply by 2^2
