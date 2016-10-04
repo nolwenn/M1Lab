@@ -1,6 +1,6 @@
 ---
 title: "Lab 3: Statistical tests"
-author: "Nolwenn Le Meur & Pascal Cr??pey"
+author: "Nolwenn Le Meur & Pascal Crepey"
 date: "27 September 2016"
 output: pdf_document
 ---
@@ -84,15 +84,45 @@ pnorm(z)
 
 `r if(solution){colFmt("", "blue")}`
 
-```{r comments}
+##Homework
+The Wilcoxon test will compare the two groups based on the ranks of values. It does not rely on the assumption of normality of the sample means. This assumption may not be true for small sample of very skewed individual data distribution. Redo 2.4 and 2.5 using the Wilcoxon test (wilcox.test) and compare the results you obtain with the one previously computed.
+
 ##3. Performing statistical tests to compare proportions
 
 `r if(solution){colFmt("", "blue")}`
 
-
-# Homework
+### 3.1 Compute the contingency table of low birth weight babies and smoking status of their mothers. Rows will have to be the smoking status and columns having (or not) a low birth weight.
+```{r table}
+table(birthwt$smoke, birthwt$low, dnn=c("smoking status", "low weight"))
 ```
 
+###3.2 Using the Chi^2 test, compare the proportions of low birth weight babies among smoking mothers and non-smoking mothers (help("chisq.test")). Interpret the results. 
+```{r chisq}
+mytab=table(birthwt$smoke, birthwt$low, dnn=c("smoking status", "low weight"))
+chisq.test(mytab)
+```
 
-##2. Performing statistical tests to compare frequencies
+###3.3 Would you get the same results if you presented the table with columns as rows and rows as columns ?
+```{r chisq}
+# Yes
+mytab2=table(birthwt$low, birthwt$smoke, dnn=c("low weight","smoking status"))
+chisq.test(mytab2)
+```
 
+###3.4 I would like more precision for my p-value. I want 6 digits after the decimal point. I can only achieve this by using the X-squared computed, the number of degrees of freedom and the function _pchisq_. Please, do it.
+
+```{r pchisq}
+p=1-pchisq(q=4.2359, df=1)
+```
+
+###3.5 Compare the weight of babies according to race, comparing the 3 races at the same time. What are your conclusions ?
+```{r tabrace}
+tabrace=table(birthwt$race, birthwt$low, dnn=c("race", "low weight"))
+chisq.test(tabrace)
+```
+
+```{r comments}
+```
+
+# Homework
+Redo the comparisons in the second part using the fisher exact test.
