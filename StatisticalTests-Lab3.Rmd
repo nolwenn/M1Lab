@@ -1,5 +1,5 @@
 ---
-title: "Lab 3: Statistical tests"
+title: 'Lab 3: Statistical tests'
 author: "Nolwenn Le Meur & Pascal Crepey"
 date: "27 September 2016"
 output: pdf_document
@@ -7,10 +7,8 @@ output: pdf_document
 
 
 ```{r include=FALSE}
-knitr::opts_chunk$set(eval=F, echo=F)
-solution <- F
-
-
+knitr::opts_chunk$set(eval=T, echo=T)
+solution <- T
 ```
 
 ```{r correction, eval=T, echo=F, include=F}
@@ -35,21 +33,26 @@ colFmt = function(x,color){
 
 
 You are *still* interested in risk factors associated with low infant birth weight. You are given the  _birthwt_ dataset, which is composed of 189 women (rows) and 10 variables (columns). The data were collected at Baystate Medical Center, Springfield, Mass during 1986. 
+```{r load data}
+library(MASS)
+data("birthwt")
+```
 
 ##1. Hypothesis
 
 ###1.1 We suspect that age, race, and smoking status may have a role to play in the low birth weight of newborns. Define the H0 (nil hypothesis) necessary to study the impact of each of these variables on babies's weight separately.
 
-`r if(solution){colFmt("", "blue")}`
+`r if(solution){colFmt("H0: On average, mothers of low birth weight babies have the same age as mothers with no low weight babies. H0 : The proportion of low birth weight babies is identical in the different racial group. H0 : The proportion of low birth weight babies is identical in the group of smoking mothers and the group of non-smoking mothers.", "blue")}`
 
 ###1.2 Define the H1 (alternative hypothesis) necessary to study the impact of each of these variables on babies's weight separately.
 
-`r if(solution){colFmt("", "blue")}`
+`r if(solution){colFmt("H1: The mean age of mothers in the group of low birth weight babies is different from the mean age of mothers in the group of non low birth weight babies. H1 : The proportion of low birth weight babies is different in at least one racial group compare to the others. H1: The proportion of low birth weight babies is different in at least one of the group compare to the others.", "blue")}`
 
 ##2. Performing statistical tests to compare means
 
 ###2.1 Compute 95% confidence intervals of birth weigths of babies born from smoking and non-smoking women. You can use _subset_ from the first lab to split the data.  
 ```{r ci} 
+library(epiDisplay) ## for the ci function
 smoker = subset(birthwt, smoke==1)
 nonsmoker = subset(birthwt, smoke==0)
 ci(smoker$bwt)
@@ -75,21 +78,72 @@ n1=length(birthwt$bwt[birthwt$smoke==1])
 n2=length(birthwt$bwt[birthwt$smoke==0])
 
 z=abs(m1-m2)/sqrt((sd1^2)/n1 + (sd2^2)/n2)
-pnorm(z)
+# compute Z statistics
+z
+# compute p-value
+2*(1-pnorm(z))
 ```
 
+`r if(solution){colFmt("The z statistics is 2.72, higher than 1.96 (threshold for an alpha at 0.05), therefore we can rejet HO. The associated p-value is 0.006, less than 0.05. We take less risk of being wrong when rejecting H0 that stated a priori.", "blue")}`
+
 ###2.4 Do the same thing but now use the t.test() function and compare the results with the z test. Look up for the conditions of applications and decide which test to use.
+```{r ttest} 
+t.test(birthwt$bwt[birthwt$smoke==1], birthwt$bwt[birthwt$smoke==0])
+# or
+# t.test(smoker$bwt, nonsmoker$bwt)
+```
+
+`r if(solution){colFmt("The p-value is 0.007 (different from the Z test because there are different tests based on different statistical law), but the conclusion is the same. We can reject H0. We take less risk of being wrong when rejecting H0 that stated a priori. The T-test can always be used. However one need to verify 2 assumptions: (1) equality of variances of the 2 samples and (2) for samples of small size (n below 30) that they come from normally distributed population. Below we test equality of variances:", "blue")}`
+
+```{r vartest} 
+# HO variance of birth weight among smokers = variance of birth weight among non smokers
+# H1 variance of birth weight among smokers != variance of birth weight among non smokers
+var.test(birthwt$bwt[birthwt$smoke==1], birthwt$bwt[birthwt$smoke==0])
+# at alpha risk = 0.05, we cannot reject H0
+```
+
+`r if(solution){colFmt("Here the p-value is higher that 0.05, we cannot reject H0. We are happy because we want the variances to be equivalent. We do not need to test for normality as the samples size are higher than 30. We can use the results of the T-test we just performed.", "blue")}`
 
 ###2.5 Do the same thing for white mothers and black mothers (race 1 & 2), interpret and conclude.
+```{r race test} 
+# HO variance of birth weight among black mothers = variance of birth weight among white mothers
+# H1 variance of birth weight among black mothers != variance of birth weight among white mothers
+var.test(birthwt$bwt[birthwt$race==2], birthwt$bwt[birthwt$race==1])
+# at alpha risk = 0.05, we cannot reject H0
+# we verify normality
+# HO the birth weight distribution of babies from black mothers = normal distribution
+# H1 the birth weight distribution of babies from black mothers != normal distribution
+shapiro.test(birthwt$bwt[birthwt$race==2])
+# at alpha risk = 0.05, we cannot reject H0
+# HO the birth weight distribution of babies from white mothers = normal distribution
+# H1 the birth weight distribution of babies from white mothers != normal distribution
+shapiro.test(birthwt$bwt[birthwt$race==1])
+# at alpha risk = 0.05, we cannot reject H0
 
-`r if(solution){colFmt("", "blue")}`
+# We can perfom the T-test
+# HO the birth weight distribution of babies from white mothers = normal distribution
+# H1 the birth weight distribution of babies from white mothers != normal distribution
+t.test(birthwt$bwt[birthwt$race==2], birthwt$bwt[birthwt$race==1])
+```
+
+`r if(solution){colFmt("Here the p-value is lower that 0.05, we reject H0. There is a difference in babies' weight distribution between black and white women. On average babies from white women weight more than babies of black women. Be carefull it doesnot mean that black women have more babies with low birth weights (below 2500g) as we are look at the overall weight (quantitative variable) and not the low versus normal weight (discrete variable). ", "blue")}`
 
 ##Homework
 The Wilcoxon test will compare the two groups based on the ranks of values. It does not rely on the assumption of normality of the sample means. This assumption may not be true for small sample of very skewed individual data distribution. Redo 2.4 and 2.5 using the Wilcoxon test (wilcox.test) and compare the results you obtain with the one previously computed.
 
-##3. Performing statistical tests to compare proportions
+```{r Wilcoxon test} 
+# HO Distribution of babies' birth weight among smokers = Distribution of babies' birth weight among non smokers
+# H1 Distribution of babies' birth weight among smokers != Distribution of babies'birth weight among non smokers
+wilcox.test(birthwt$bwt[birthwt$smoke==1], birthwt$bwt[birthwt$smoke==0])
 
-`r if(solution){colFmt("", "blue")}`
+# HO Distribution of babies' birth weight among black mothers = Distribution of babies' birth weight among white mothers
+# H1 Distribution of babies' birth weight among black mothers != Distribution of babies'birth weight among white mothers
+wilcox.test(birthwt$bwt[birthwt$race==2], birthwt$bwt[birthwt$race==1])
+```
+
+`r if(solution){colFmt("The conclusions are the same as above.", "blue")}`
+
+##3. Performing statistical tests to compare proportions
 
 ### 3.1 Compute the contingency table of low birth weight babies and smoking status of their mothers. Rows will have to be the smoking status and columns having (or not) a low birth weight.
 ```{r table}
@@ -98,12 +152,21 @@ table(birthwt$smoke, birthwt$low, dnn=c("smoking status", "low weight"))
 
 ###3.2 Using the Chi^2 test, compare the proportions of low birth weight babies among smoking mothers and non-smoking mothers (help("chisq.test")). Interpret the results. 
 ```{r chisq}
+# HO The proportion of low birth weight babies among smoking mothers = the proportion of low birth weight babies among non-smoking mothers 
+# = the proportion of "normal" birth weight babies among non-smoking mothers = the proportion of "normal" birth weight babies among smoking mothers
+# OR in peidemiological terms:  there is no an association between the smoking status and the low birth weight
+# H1 At least of the equality above is false
+# OR in peidemiological terms:  there is an association between the smoking status and the low birth weight
 mytab=table(birthwt$smoke, birthwt$low, dnn=c("smoking status", "low weight"))
 chisq.test(mytab)
+# Among the low birth weight babies there is a slightly higher proportion of smoking mother.
+prop.table(mytab,margin=2)
 ```
 
+`r if(solution){colFmt("The p-avlue is below 0.05. We can reject H0. There is an association between the smoking status and the low birth weight", "blue")}`
+
 ###3.3 Would you get the same results if you presented the table with columns as rows and rows as columns ?
-```{r chisq}
+```{r chisq2}
 # Yes
 mytab2=table(birthwt$low, birthwt$smoke, dnn=c("low weight","smoking status"))
 chisq.test(mytab2)
@@ -121,8 +184,15 @@ tabrace=table(birthwt$race, birthwt$low, dnn=c("race", "low weight"))
 chisq.test(tabrace)
 ```
 
-```{r comments}
-```
+`r if(solution){colFmt("The p-avlue is higher than 0.05. We cannot reject H0. It seems that there is no sognificant association between the race and the low birth weight", "blue")}`
 
 # Homework
 Redo the comparisons in the second part using the fisher exact test.
+
+```{r Fisher}
+## For smoking status and low birth weight
+fisher.test(mytab)
+# For race and low birth weight
+fisher.test(tabrace)
+```
+`r if(solution){colFmt("The conclusions are identical.", "blue")}`
