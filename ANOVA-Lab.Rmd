@@ -1,0 +1,60 @@
+---
+title: 'Lab 4: ANOVA'
+author: "Nolwenn Le Meur"
+date: "7 November 2016"
+output: pdf_document
+---
+```{r include=FALSE}
+knitr::opts_chunk$set(eval=F, echo=F)
+solution <- T
+```
+
+```{r correction, eval=T, echo=F, include=F}
+#Color Format
+colFmt = function(x,color){
+  outputFormat = knitr::opts_knit$get("rmarkdown.pandoc.to")
+  if(outputFormat == 'latex')
+    paste("\\textcolor{",color,"}{",x,"}",sep="")
+  else if(outputFormat == 'html')
+    paste("<font color='",color,"'>",x,"</font>",sep="")
+  else
+    x
+}
+```
+
+#Objectives:
+
+* Define hypothesis to be tested
+* Compute and interpret statistical tests including ANOVA and Kruskall-Walli Tests
+
+You are again interested in risk factors associated with low infant birth weight. You are given the  _birthwt_ dataset, which is composed of 189 women (rows) and 10 variables (columns). The data were collected at Baystate Medical Center, Springfield, Mass during 1986. 
+```{r load data}
+library(MASS)
+data("birthwt")
+```
+
+
+## I. Infant birth weigth and _race_
+You suspect a relationship between infant birth weigth and _race_
+
+1. State the null hypothesis 
+2. Choose and apply the appropriate statistical tests
+3. Interpret the results
+
+## II. Low birth weigth and _race_
+You suspect a relationship between low birth weigth and _race_
+
+1. State the null hypothesis 
+2. Choose and apply the appropriate statistical test
+3. Interpret the results
+```{r}
+fisher.test(table(birthwt$low, birthwt$race))
+```
+
+## III. Race and the others risk factors
+You suspect that _race_ might be a counfonder in your analysis. Analysis the relationship between _race_ and the other risk factors.
+
+1. State the null hypothesis 
+2. Choose and apply the appropriate statistical tests
+3. Interpret the results
+

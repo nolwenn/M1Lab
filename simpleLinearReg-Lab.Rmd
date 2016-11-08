@@ -1,0 +1,68 @@
+---
+title: 'Lab 5: Simple linear regression'
+author: "Nolwenn Le Meur"
+date: "9 November 2016"
+output: pdf_document
+---
+```{r include=FALSE}
+knitr::opts_chunk$set(eval=F, echo=F)
+solution <- T
+```
+
+```{r correction, eval=T, echo=F, include=F}
+#Color Format
+colFmt = function(x,color){
+  outputFormat = knitr::opts_knit$get("rmarkdown.pandoc.to")
+  if(outputFormat == 'latex')
+    paste("\\textcolor{",color,"}{",x,"}",sep="")
+  else if(outputFormat == 'html')
+    paste("<font color='",color,"'>",x,"</font>",sep="")
+  else
+    x
+}
+```
+
+#Objectives:
+* Perform univariate analysis
+* Compute a linear regression model
+* Assess the quality of the model using diagnostic plot
+
+You are interested in Nutritional and Marketing Information on US Cereals (dataset named UScereal and available in the MASS library). The data come from the 1993 ASA Statistical Graphics Exposition, and are taken from the mandatory F&DA food label. The data have been normalized here to a portion of one American cup.
+
+## I. Descriptive statistics
+
+1. What are the variables and their types
+```{r load data}
+library(MASS)
+data("UScereal")
+```
+2. Using the summary() function to compute descriptive statistical parameters. Discuss the results
+```{r summary}
+summary(UScereal)
+```
+
+## II. Univariate analysis
+
+You want to verify that the amount of calories for cereal does not depend on its manufacturer.
+
+1. Use an adequate graphical representation for a first overview of your hypothesis
+```{r boxplot}
+boxplot(calories~mfr, data=UScereal, col="lightblue", ylab="Number of calories in one portion", main="by Manufacturer")
+```
+2. State your null and alternative hypothesis
+3. Perform the test and interpret
+```{r}
+by(UScereal$calories, UScereal$mfr, shapiro.test)
+kruskal.test(calories~mfr, data=UScereal)
+```
+
+## II. Simple linear regression analysis
+
+You want to find a simple linear regression model that "best" explain the level of calories in a cereal type.
+
+For each possible explanatory variable:
+
+1. Build the linear model 
+2. Assess its quality using diagnostic plot
+3. Interpret 
+
