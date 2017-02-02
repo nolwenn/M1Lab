@@ -5,7 +5,7 @@ date: "7 November 2016"
 output: pdf_document
 ---
 ```{r include=FALSE}
-knitr::opts_chunk$set(eval=F, echo=F)
+knitr::opts_chunk$set(eval=T, echo=T)
 solution <- T
 ```
 
@@ -37,24 +37,162 @@ data("birthwt")
 ## I. Infant birth weigth and _race_
 You suspect a relationship between infant birth weigth and _race_
 
+`r if(solution){colFmt("It was not asked but you may want to have a visual of your hypothesis and compute some summary statistics by race.", "blue")}`
+```{r}
+boxplot(bwt~ race, data= birthwt, xlab="race", ylab="Babies weight (g)", col="lightblue")
+by( birthwt$bwt, birthwt$race, summary)
+```
+
 1. State the null hypothesis 
+
+`r if(solution){colFmt("H0: On average, the infant birth weigth of white women is equal to the infant birth weigth of black women and is infant birth weigth of the women of other races (H0: mean babies' weight of white women =  mean babies' weight of black women = mean babies' weight of women of other races) at alpha risk 0.05 ", "blue")}`
+
+`r if(solution){colFmt("H1: at least one group have mean babies' weight different from the other.", "blue")}`
+
 2. Choose and apply the appropriate statistical tests
+
+`r if(solution){colFmt("Because we are invetigating babies weight that is a quantitative variable and comparing means between 3 racial groups we plan to use an ANOVA.But first we have to we have to verify the normality assumption. To that aim we will test the following hypotheses using the Shapiro test. ", "blue")}`
+
+`r if(solution){colFmt("H0: The distribution of babies' weight in the white women follows a normal distribution, with an alpha risk or 0.05.", "blue")}`
+
+`r if(solution){colFmt("H1: The distribution of babies' weight in the white women does not follows a normal distribution...(same for the black and other).", "blue")}`
+```{r}
+by(birthwt$bwt, birthwt$race, shapiro.test)
+# OR by using the subset fonction and create a new database named white (same for the other 2 groups)
+# white = subset(birthwt, race==1)
+# shapiro.test(white$bwt)
+# OR by using logical indexing approach for the variable birthwt$bwt
+# shapiro.test(birthwt$bwt[birthwt$race==2])
+```
+
+`r if(solution){colFmt("The p-value are for white 0.48, black O.80 and others 0.20. They are all greater than 0.05. We fell to reject the H0 for all three. The distributions of babies' weight in the different women's race do not significantly differ from a normal distribution. The normality assumption required to apply an ANOVA is verified.", "blue")}`
+
+```{r}
+# In the dataset race is coded as an interger but in reality race is categorical. 
+# You need to force it in the function call using factor
+bwt2race = aov(bwt~ factor(race), data= birthwt)
+# Note that if you want to change the race variable into a factor for good you can do
+# birthwt$race = factor(birthwt$race, levels=c(1,2,3), labels=c("White","Black","Other"))
+# then no need to force it
+# bwt2race = aov(bwt~ race, data= birthwt)
+summary(bwt2race)
+```
+
 3. Interpret the results
+
+`r if(solution){colFmt("The summary of the statistical test returns a p-value of 0.00834 that is lower than the alpha risk 0.05 set a priori. You reject H0. At least one group has mean babies'weight different from the other two. To decipher which one you can perform a TukeyHSD test using the putput of the ANOVA.", "blue")}`
+
+```{r}
+TukeyHSD(bwt2race)
+```
+
+`r if(solution){colFmt("The output of the TukeyHSD tells us that on average babies'weight from white women significantly differs from black women (p-value = 0.042) and 'white' babies are on average 383 grams heavier that 'black' babies with IC95[9,756]. Similarly, 'white' babies are on average 297 grams heavier that 'other races' babies with IC95[28, 566] (p-value=0.02). However, we fail to conclude that there is a significant difference between 'black' babies and 'other races' (p-value=0.86).", "blue")}`
 
 ## II. Low birth weigth and _race_
 You suspect a relationship between low birth weigth and _race_
 
-1. State the null hypothesis 
-2. Choose and apply the appropriate statistical test
-3. Interpret the results
+`r if(solution){colFmt("Same as aboce, It was not asked but you may want to have a visual of your hypothesis and compute some summary statistics by race.", "blue")}`
+
 ```{r}
+## 2 categorical variables you can only count how many low birth weight babies in each race group
+table("Low"=birthwt$low, "Race"=birthwt$race)
+barplot(table("Low"=birthwt$low, "Race"=birthwt$race), 
+        main="Frequency of low birth weight status by race", legend=c("No","Yes"))
+```
+
+1. State the null hypothesis 
+
+`r if(solution){colFmt("H0: the proportion of low birth weight babies in the white group = the proportion of low birth weight babies in the black group = the proportion of low birth weight babies in the other group = the proportion of non-low birth weight babies in the white group=the proportion of non-low birth weight babies in the black group = the proportion of non-low birth weight babies in the other group, with alpha riwk 0.05", "blue")}`
+
+`r if(solution){colFmt("H1: At least one proportion differs from the other.", "blue")}`
+
+2. Choose and apply the appropriate statistical test
+```{r}
+# because we are comparing proportion and not mean:
 fisher.test(table(birthwt$low, birthwt$race))
 ```
 
-## III. Race and the others risk factors
-You suspect that _race_ might be a counfonder in your analysis. Analysis the relationship between _race_ and the other risk factors.
-
-1. State the null hypothesis 
-2. Choose and apply the appropriate statistical tests
 3. Interpret the results
 
+`r if(solution){colFmt("The p-value is 0.07, greater than 0.05. We fell to reject H0.The proportions of low birth babies do not significantly differ between the groups. We cannot conclude that there is a significant association between low birth waight and race.", "blue")}`
+
+## III. Race and the others risk factors
+
+You suspect that _race_ might be a counfonder in your analysis. Analysis the relationship between _race_ and the other risk factors.
+
+### For race
+1. State the null hypothesis 
+
+`r if(solution){colFmt("H0: On average, ages of white women are equal to the ages of black women and are equal to the ages of other races (H0: mean age of white women =  mean age of black women = mean age of women of other races) at alpha risk 0.05 ", "blue")}`
+
+`r if(solution){colFmt("H1: at least one group have mean age different from the other.", "blue")}`
+
+`r if(solution){colFmt("Because we are comparing 3 groups for the same quantitative variable we plan to use ANOVA. But have to verify the normality assumption. That the H0 hypothesis below", "blue")}`
+
+For the Shapiro test
+ 
+`r if(solution){colFmt("H0: The distribution of age of the white women follows  a normal distribution, with an alpha risk or 0.05.", "blue")}`
+
+`r if(solution){colFmt("H1: The distribution of age of the white women does not follows a normal distribution...(same for the black and other).", "blue")}`
+
+```{r}
+by(birthwt$age, birthwt$race, shapiro.test)
+```
+`r if(solution){colFmt("H1: The distribution of age of the white women does not follows a normal distribution. Same conclusion for the black. We do not verify the ANOVA assumption and sholud prefer a Kruskall Wallis test.", "blue")}`
+
+2. Choose and apply the appropriate statistical tests
+
+`r if(solution){colFmt("H0: The distribution of ages of white women is equal to the distribution of ages of black women and is equal to the distribution of ages of the women of other races at alpha risk 0.05 ", "blue")}`
+
+`r if(solution){colFmt("H1: at least one group have a different distribution of age.", "blue")}`
+
+```{r}
+kruskal.test(age ~ race, data=birthwt)
+```
+
+`r if(solution){colFmt("The p-value is 0.02, lower that 0.05. We reject H0. At least one group have a different distribution of age. Indeed black women seems younger than the others.", "blue")}`
+
+3. Interpret the results
+
+`r if(solution){colFmt("The p-value is 0.02, lower that 0.05. We reject H0. At least one group have a different distribution of age. Indeed black women seems younger than the others.", "blue")}`
+```{r}
+by(birthwt$age, birthwt$race,summary)
+boxplot(age ~ race, data=birthwt, xlab="Race", ylab="Age (years)")
+```
+
+
+`r if(solution){colFmt("You proceed as above for the mothers weight (lwt), the number of visits to physician (ftv), and the number of previous premature labours (ptl). We can conclude that compare to white and black womens, the other group seems skinnier but we cannot find significant differences in term of the number of visits to physician and number of previous premature labours.", "blue")}`
+```{r, eval=F}
+## Mothers' weight
+by(birthwt$lwt, birthwt$race, shapiro.test)
+kruskal.test(lwt ~ race, data=birthwt)
+by(birthwt$lwt, birthwt$race, summary)
+boxplot(lwt ~ race, data=birthwt, xlab="Race", ylab="Mothers' weight (Pounds)")
+
+## Number of visits
+by(birthwt$ftv, birthwt$race, shapiro.test)
+kruskal.test(ftv ~ race, data=birthwt)
+
+## Number of premature labours
+by(birthwt$ptl, birthwt$race, shapiro.test)
+kruskal.test(ptl ~ race, data=birthwt)
+```
+
+`r if(solution){colFmt("For the categoical(qualitative) values, you test for equality of proportion therefore use a Fisher test ", "blue")}`
+
+```{r}
+fisher.test(table(birthwt$smoke, birthwt$race))
+## For smoking p-value < 5% => H1
+fisher.test(table(birthwt$ht, birthwt$race))
+## p-value >5% => failing to reject H0
+fisher.test(table(birthwt$ui, birthwt$race))
+## p-value >5% => failing to reject H0
+```
+
+`r if(solution){colFmt("We can conclude that only the smoking status is different between the 3 'races'. In proportion, we have more smoking women in the white groupe", "blue")}`
+
+```{r}
+prop.table(table(birthwt$smoke, birthwt$race), margin=2)
+```
+
+`r if(solution){colFmt("At the end because some risk factors are not equally distributed between the different races, we might considare race as a confunding factor for which we will have to adjust in multivariate analysis.", "blue")}`
