@@ -1,0 +1,121 @@
+---
+title: 'Homework2'
+author: "Nolwenn Le Meur"
+date: "22 November 2016"
+output: pdf_document
+---
+```{r include=FALSE}
+knitr::opts_chunk$set(eval=F, echo=F)
+solution <- F
+```
+
+```{r correction, eval=T, echo=F, include=F}
+#Color Format
+colFmt = function(x,color){
+  outputFormat = knitr::opts_knit$get("rmarkdown.pandoc.to")
+  if(outputFormat == 'latex')
+    paste("\\textcolor{",color,"}{",x,"}",sep="")
+  else if(outputFormat == 'html')
+    paste("<font color='",color,"'>",x,"</font>",sep="")
+  else
+    x
+}
+```
+
+#Objectives:
+* Univariate tests
+
+You are interested in infertility after spontaneous and induced abortion.
+
+Using the functions library() and data() load the dataset 'infert' from the datasets library
+
+```{r load data}
+library(datasets)
+data("infert")
+# see help page ?infert
+```
+
+## I. Age and case
+In the previous homework you describe the distribution of age for the cases and the non cases but to conclude you need to perform a statistical test.
+
+1. Formulate the hypotheses
+
+`r if(solution){colFmt("H0: On average the ages among the cases is identical to the ages among the non cases, with an alpha risk 0.05. H1: On average the ages among the cases is different from the ages among the non cases.", "blue")}`
+
+2. Choose the test and verify the assumptions if needed
+
+`r if(solution){colFmt("We plan to compare the mean of 2 groups : a quantitative variable split by a categorical variable with 2 modalities. To this aim we could use a T-test but first we need to verify normality.", "blue")}`
+
+`r if(solution){colFmt("H0: the distribution of age among the case (or non-cases) follows a normal distribution, alpha risk 0.05 H1: the distribution of age among the case (or non-cases) does not follow a normal distribution.", "blue")}`
+
+```{r shapiro1}
+by(infert$age, infert$case, shapiro.test)
+```
+
+`r if(solution){colFmt(" We fail to reject H0 for the distribution of ages among the cases: the distribution is not significantly different from a normal distribution. However we reject H0 for the non-cases. We can not apply a t-test. We therefore apply a Wilcoxon test.", "blue")}`
+
+3. Apply the test and interpet
+```{r wilcox.test}
+wilcox.test(infert$age~ infert$case)
+```
+
+`r if(solution){colFmt("P is 0.095,  We fail to reject H0 the distributions of age do not significantly different between the cases and non-cases.", "blue")}`
+
+## II. Age and Education
+You suspect an association between age and education levels
+
+1. Represent the distribution of age by education levels and interpret
+```{r boxplot}
+ boxplot(age~education, data=infert)
+```
+
+`r if(solution){colFmt("We can make the hypothesis that the distribution of age differ", "blue")}`
+
+2. Formulate the statistical hypothesis you would like to test
+
+`r if(solution){colFmt("H0: On average the ages of the patients of different education levels are identical, with an alpha risk 0.05. H1:  On average the ages of the patients of different education levels are different.", "blue")}`
+
+3. What is(are) the assumption(s)? Test them if needed (hint: use the function by() )
+
+`r if(solution){colFmt("We plan to compare the mean of 2 groups : a quantitative variable split by a categorical variable with 3 modalities. To this aim we could use an ANOVA but first we need to verify normality.", "blue")}`
+```{r shapiro}
+by(infert$age, infert$education, shapiro.test)
+```
+`r if(solution){colFmt(" We fail to reject H0 for 6-11yrs level only. We can note use an ANOVA. We apply a Kruskal test.", "blue")}`
+
+4. Apply the appropiate statistical test to answer the statistical hypothesis formulated above and conclude
+```{r kruskal}
+kruskal.test(age~education, data=infert)
+by(infert$age, infert$education, summary)
+```
+`r if(solution){colFmt("We reject H0 the distributions of age significantly different between the education levels. While looking at the mean and median of each group we note that people are younger in the 12+ years group than in the 2 other groups. Similarly the group 6-11yrs seems younger than the 0-5yrs.", "blue")}`
+
+
+## III. Case and Education
+1. Formulate the hypotheses
+2. Choose the test and verify the assumptions if needed
+3. Apply the test and interpet
+
+```{r fisher1}
+table(infert$education,infert$case)
+prop.table(table(infert$education,infert$case), margin=2)
+fisher.test(infert$education,infert$case)
+```
+
+## IV. Case and Spontaneous
+1. Formulate the hypotheses
+
+`r if(solution){colFmt("H0: The proportion of case and non-cases is equivalent whatever the abortions status, alpha risk 0.05. H1:The proportion of case and non-cases is different and depend on the abortions status", "blue")}`
+
+2. Choose the test and verify the assumptions if needed
+`r if(solution){colFmt("We plan to compare more than 2 proportions. To this aim we could use a Fisher Excat test.", "blue")}`
+
+3. Apply the test and interpet
+
+```{r fisher2}
+fisher.test(infert$spontaneous,infert$case)
+table("spontaneaous"=infert$spontaneous,"case"=infert$case)
+prop.table(table("spontaneaous"=infert$spontaneous,"case"=infert$case), margin=1)*100
+```
+
+`r if(solution){colFmt("We reject H0 the proportions differ. Among the women who had 2 abortions we have 66 percent of cases and we have less cases among the group with no abortions.", "blue")}`
