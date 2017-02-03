@@ -1,0 +1,89 @@
+---
+title: 'Study title'
+author: "your name"
+date: "date"
+output: pdf_document
+---
+```{r include=FALSE}
+knitr::opts_chunk$set(eval=T, echo=T)
+solution <- T
+```
+
+```{r correction, eval=T, echo=F, include=F}
+#Color Format
+colFmt = function(x,color){
+  outputFormat = knitr::opts_knit$get("rmarkdown.pandoc.to")
+  if(outputFormat == 'latex')
+    paste("\\textcolor{",color,"}{",x,"}",sep="")
+  else if(outputFormat == 'html')
+    paste("<font color='",color,"'>",x,"</font>",sep="")
+  else
+    x
+}
+```
+
+#Introduction:
+
+
+## I. Data management
+Data mangement is essential to the rest of the analytical process. 
+
+The learning objectives are:
+- load or read your dataset in R
+- verify the dimension of your dataset
+- verify the type of your variables and convert them if neeeded
+
+1. Read the data in R
+
+```{r load data}
+
+```
+
+2. Count the statistical units and the variable
+```{r dimensions}
+
+```
+
+3. List the variables (using their names) that related to the patients characteristics, the outcome, and the risk factors or potential counfounders.
+
+4. Verify that the variable type (quantitative, qualitative) are correct, if not convert it.
+
+```{r dimensions}
+
+```
+
+## II. Descriptive statistics
+Learning objectives: Describe the study population using the most appropriate indicators
+```{r desc stat}
+
+```
+
+## III. Visualization
+Learning objectives: Describe the study population using the most appropriate indicators
+
+```{r plot}
+
+```
+
+## IV. Statistical tests (Ref Modeul 111 - Day 11 September 28. Homework 2)
+Formulate statistical hypothesis according to the objective aimed by the study
+Apply the statistical test using the R or STATA software and to interpret the results
+Measure the strength of the association between two quantitative or qualitative variables and
+interpret it
+```{r tests}
+
+```
+
+## V. Linear regression (Ref. Module 106 - Day 16, November 9. Homework 3)
+Learning objectives: Interpret a scatter plot
+Measure the strength of the association between two quantitative or qualitative variables and
+interpret it
+Build a linear model
+Follow the step by step procedure to obtain the best model and interpret it
+Assess the validity of a linear model
+
+
+```{r scatterplot}
+
+```
+
