@@ -102,7 +102,7 @@ chisq.test(mytab)
 ```
 
 ###3.3 Would you get the same results if you presented the table with columns as rows and rows as columns ?
-```{r chisq}
+```{r chisq2}
 # Yes
 mytab2=table(birthwt$low, birthwt$smoke, dnn=c("low weight","smoking status"))
 chisq.test(mytab2)
@@ -122,6 +122,12 @@ chisq.test(tabrace)
 
 ```{r comments}
 ```
+###3.6 Do the comparison by race two by two and compare your results with the previsous ones.
 
 # Homework
-Redo the comparisons in the second part using the fisher exact test.
+Redo the comparisons in the third part using the fisher exact test.
+
+
+
+
+
