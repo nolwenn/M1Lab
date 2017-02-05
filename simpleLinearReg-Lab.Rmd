@@ -1,0 +1,171 @@
+---
+title: 'Lab 5: Simple linear regression'
+author: "Nolwenn Le Meur"
+date: "9 November 2016"
+output: pdf_document
+---
+```{r include=FALSE}
+knitr::opts_chunk$set(eval=T, echo=T)
+solution <- T
+```
+
+```{r correction, eval=T, echo=F, include=F}
+#Color Format
+colFmt = function(x,color){
+  outputFormat = knitr::opts_knit$get("rmarkdown.pandoc.to")
+  if(outputFormat == 'latex')
+    paste("\\textcolor{",color,"}{",x,"}",sep="")
+  else if(outputFormat == 'html')
+    paste("<font color='",color,"'>",x,"</font>",sep="")
+  else
+    x
+}
+```
+
+#Objectives:
+* Perform univariate analysis
+* Compute a linear regression model
+* Assess the quality of the model using diagnostic plot
+
+You are interested in Nutritional and Marketing Information on US Cereals (dataset named UScereal and available in the MASS library). The data come from the 1993 ASA Statistical Graphics Exposition, and are taken from the mandatory F&DA food label. The data have been normalized here to a portion of one American cup.
+
+## I. Descriptive statistics
+
+1. What are the variables and their types
+```{r load data}
+library(MASS)
+data("UScereal")
+# When a datasets is issued from a R library like MASS 
+# you can have a look at the help page for details
+# ?UScereal
+```
+
+The qualitative(categorical) variables are:
+- mfr : Manufacturer, represented by its first initial: G=General Mills, K=Kelloggs, N=Nabisco, P=Post, Q=Quaker Oats, R=Ralston Purina.
+- vitamins: vitamins and minerals (none, enriched, or 100). [ordinal]
+
+The quantitative variables are:
+- calories: number of calories in one portion.
+- protein : grams of protein in one portion.
+- fat:  grams of fat in one portion.
+- sodium: milligrams of sodium in one portion.
+- fibre: grams of dietary fibre in one portion.
+- carbo: grams of complex carbohydrates in one portion.
+- sugars: grams of sugars in one portion.
+- potassium: grams of potassium.
+- shelf: display shelf (1, 2, or 3, counting from the floor). [Note that it could be considerate as a qualitatice ordinal variable]
+
+
+2. Using the summary() function to compute descriptive statistical parameters. Discuss the results
+```{r summary}
+summary(UScereal)
+```
+
+`r if(solution){colFmt("We can note the small number of cereals sale by manufacturer N. And the asymetry of the distribution for the potassium variable. This might generate problem during the analysis.", "blue")}`
+
+## II. Univariate analysis
+
+You want to verify that the amount of calories for cereal does not depend on its manufacturer.
+
+1. Use an adequate graphical representation for a first overview of your hypothesis
+```{r boxplot}
+boxplot(calories~mfr, data=UScereal, col="lightblue", 
+        ylab="Number of calories in one portion", main="by Manufacturer")
+```
+2. State your null and alternative hypothesis
+
+`r if(solution){colFmt("H0: On average, the amount of calories is equal whoever is the manufacturer at alpha risk 0.05.", "blue")}`
+
+`r if(solution){colFmt("H1: at least one manufacturer present cereals that differ on average for their amount of calories compare to the others.", "blue")}`
+
+3. Perform the test and interpret
+
+`r if(solution){colFmt("Because we are investigating calories that is a quantitative variable and comparing means between 6 manufacturers we plan to use an ANOVA.But first we have to we have to verify the normality assumption. To that aim we will test the following hypotheses using the Shapiro test. ", "blue")}`
+
+`r if(solution){colFmt("H0: The distribution of calories provided by  manufacturer G follows a normal distribution, with an alpha risk or 0.05.", "blue")}`
+
+`r if(solution){colFmt("H1: The distribution of calories provided by  manufacturer G does not follows a normal distribution...(same for the other manufacturers).", "blue")}`
+
+```{r}
+by(UScereal$calories, UScereal$mfr, shapiro.test)
+```
+
+`r if(solution){colFmt("H1: The distribution of calories of 4 manufacturers does not follows a normal distribution (namely G, K, N, P). We do not verify the ANOVA assumption and sholud prefer a Kruskall Wallis test.", "blue")}`
+
+`r if(solution){colFmt("H0: The distribution of calories is equal in all manufacturer at alpha risk 0.05.", "blue")}`
+
+`r if(solution){colFmt("H1: The distribution of calories is different for at least one manufacturer.", "blue")}`
+
+```{r}
+by(UScereal$calories, UScereal$mfr, shapiro.test)
+kruskal.test(calories~mfr, data=UScereal)
+```
+
+`r if(solution){colFmt("We fail to reject H0. The distributions of calories are not significantly different between manufacturers.", "blue")}`
+
+## II. Simple linear regression analysis
+
+You want to find a simple linear regression model that "best" explain the level of calories in a cereal type.
+
+For each possible explanatory variable:
+
+1. Build the linear model 
+2. Assess its quality using diagnostic plot
+3. Interpret 
+
+```{r, eval=F}
+plot(calories~protein, data=UScereal)
+regProtein = lm(calories~protein, data=UScereal)
+# Diagnostic plots all in one panel
+layout(matrix(c(1:4), nrow=2))
+plot(regProtein)
+# Here: Heteroscedasticity issue
+# to reset the plot panel to 1 window
+dev.off()
+
+
+plot(calories~fat, data=UScereal)
+regFat = lm(calories~fat, data=UScereal)
+plot(regFat)
+# Too many cereals with 0 fat. The hypothese of linearity is FALSE
+
+plot(calories~sodium, data=UScereal)
+regSodium = lm(calories~sodium, data=UScereal)
+plot(regSodium)
+# The hypothese of linearity is FALSE and heteroscedasticity issue
+
+plot(calories~fibre, data=UScereal)
+# The hypothese of linearity is probably FALSE
+regFibre = lm(calories~fibre, data=UScereal)
+plot(regFibre)
+
+plot(calories~carbo, data=UScereal)
+regCarbo = lm(calories~carbo, data=UScereal)
+plot(regCarbo)
+# Heteroscedasticity issue
+
+plot(calories~sugars, data=UScereal)
+regSugars = lm(calories~sugars, data=UScereal)
+plot(regSugars)
+summary(regSugars)
+# calories = 5.29*sugars + 96.16 + epsilon
+# Coef of determination: R2 23% of the variation in calorie content is explain by the sugar content
+
+plot(calories ~ factor(shelf), data=UScereal)
+regShelf = lm(calories~factor(shelf, ref="2"), data=UScereal)
+plot(regShelf)
+summary(regShelf)
+# Compare the first shelf the cereal on the 3rd shelf present more calories.
+# R2 = 17%
+
+plot(calories~potassium, data=UScereal)
+regPotassium = lm(calories~potassium, data=UScereal)
+plot(regPotassium)
+# Heteroscedasticity issue for the high values
+
+plot(calories ~ vitamins, data=UScereal)
+regVitamins = lm(calories~vitamins, data=UScereal)
+plot(regVitamins)
+# Residuals not normaly distributed
+```
+

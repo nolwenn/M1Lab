@@ -1,0 +1,110 @@
+---
+title: 'Homework1'
+author: "Nolwenn Le Meur"
+date: "14 November 2016"
+output: pdf_document
+---
+```{r include=FALSE}
+knitr::opts_chunk$set(eval=T, echo=T)
+solution <- T
+```
+
+```{r correction, eval=T, echo=F, include=F}
+#Color Format
+colFmt = function(x,color){
+  outputFormat = knitr::opts_knit$get("rmarkdown.pandoc.to")
+  if(outputFormat == 'latex')
+    paste("\\textcolor{",color,"}{",x,"}",sep="")
+  else if(outputFormat == 'html')
+    paste("<font color='",color,"'>",x,"</font>",sep="")
+  else
+    x
+}
+```
+
+#Objectives:
+* Descriptive statitics
+* Graphics
+
+You are interested in infertility after spontaneous and induced abortion.
+
+## I. Descriptive statistics
+Using the functions library() and data() load the dataset 'infert' from the datasets library
+
+1. What are the variables and their types
+```{r load data}
+library(datasets)
+data("infert")
+# see help page ?infert
+```
+`r if(solution){colFmt("Quantitative: Age (continous), parity (discrete); Qualitative: Education (ordinal), induced (ordinal), case (binary), spontaneous (ordinal), stratum number (nominal), matched set number (nominal)", "blue")}`
+
+2. Using the summary() function to compute descriptive statistical parameters. Are all the results meanfull?
+```{r summary}
+summary(infert)
+```
+
+`r if(solution){colFmt("Some qualitative variables are coded as integer (induced, case, spontaneous), the output of the summary function is not appropiate.", "blue")}`
+
+2. Convert the qualitative variables into factors using the code below:
+```{r factor, eval=T, echo=T}
+infert$induced <- factor(infert$induced, labels=c("0","1", "2+"))
+infert$spontaneous <- factor(infert$spontaneous, labels=c("0","1", "2+"))
+infert$case<- factor(infert$case, labels=c("control","case"))
+# stratum and match set number should also be transformed
+infert$stratum<- factor(infert$stratum)
+infert$pooled.stratum<- factor(infert$pooled.stratum)
+```
+
+
+3. Re-apply the summary() function. 
+```{r summary2}
+summary(infert)
+```
+`r if(solution){colFmt("The given summary is now more appropriate with counts for the qualitative variables.", "blue")}`
+
+4. Use the table() and prop.table() function to compute the proportion of women who had infertility issues after 2 or more spontaneous abortion. 
+```{r prop.table}
+prop.table(table(infert$case, infert$spontaneous),margin=1)
+```
+`r if(solution){colFmt("29 percent of the women with infertility issues have had 2 or more spontaneous abortion.", "blue")}`
+
+```{r prop.table2}
+prop.table(table(infert$case, infert$spontaneous),margin=2)
+```
+
+`r if(solution){colFmt("67 percent of women who had 2+ spontaneous abortions had infertility issues", "blue")}`
+## II. Graphics
+
+1. Use the code below to summaryze the distribution of age among the cases
+```{r histogram case}
+hist(infert$age[infert$case=="case"], col="lightblue", ylab="Frequency", 
+     xlab="Age groups", main="Distribution of ages among the cases")
+```
+
+2. Do the same for the control. Whould you conclude that the distribution of ages different between the 2 groups?
+```{r histogram control}
+hist(infert$age[infert$case=="control"], breaks=5, col="lightblue", 
+     ylab="Frequency", xlab="Age groups", main="Distribution of ages among the controls")
+```
+
+`r if(solution){colFmt("Be careful to compare plots you should use the same scale. Here for the second plot we need to force 5 breaks. Still it's only a visual comparison and you can not conclude before performing a test.", "blue")}`
+
+3. Use an other graphical representations to summarize the distribution of ages for the case and control group within the same panel. What is your interpretation?
+```{r boxplot}
+boxplot(age~case, data=infert, col="lightblue", ylab="Age (years)", main="Distribution of ages")
+```
+
+`r if(solution){colFmt("Nearly identical. We can make the hypothesis that there is no difference but we need to test it to be sure (still with an alpha risk)", "blue")}`
+
+4. Use the table() and pie() function to summaryze the 'parity' variable.
+```{r pie}
+pie(table(infert$parity))
+```
+
+5. Use the table() and barplot() function to summaryze the 'education' variable.
+```{r barplot}
+barplot(table(infert$education, infert$case),legend=T, main="Count")
+barplot(prop.table(table(infert$education, infert$case), margin=2)*100,legend=T,main="Frequency")
+```
+
