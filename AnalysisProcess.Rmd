@@ -31,7 +31,7 @@ Data mangement is essential to the rest of the analytical process.
 The learning objectives are:
 - load or read your dataset in R
 - verify the dimension of your dataset
-- verify the type of your variables and convert them if neeeded
+- verify the type of your variables and convert them if needed
 
 1. Read the data in R
 
@@ -39,33 +39,57 @@ The learning objectives are:
 
 ```
 
-2. Count the statistical units and the variable
+2. Count the statistical units and the variables
 ```{r dimensions}
 
 ```
 
-3. List the variables (using their names) that related to the patients characteristics, the outcome, and the risk factors or potential counfounders.
+3. List the variables (using their names) related to the patients characteristics, the outcome, and the risk factors or potential counfounders.
 
-4. Verify that the variable type (quantitative, qualitative) are correct, if not convert it.
+4. Verify that the variable types (quantitative, qualitative) are correct, if not convert them.
 
-```{r dimensions}
+```{r dimensions2}
 
 ```
 
 ## II. Descriptive statistics
 Learning objectives: Describe the study population using the most appropriate indicators
-```{r desc stat}
+
+1. Centrality measures: 
+  a. Compute the mean, median, first and third quartile of each relevant variables.
+  b. Do the same thing but grouped by the outcome variable (using by).
+```{r descStat1}
+
+```
+2. Dispersion measures: 
+  a. Compute the range, variance and standard deviation of each relevant variables. 
+  b. Do the same thing but grouped by the outcome variable (using by).
+```{r descStat2}
+
+```
+3. Frequency measures: 
+  a. What is the purpose of the tabulate() function ? Use it on the age variable and interpret the result.
+  b. What is the purpose of the which.max() function ? Use it on the previous result and interpret.
+  c. Use the table function on two relevant variables you want to cross. Interpret. 
+```{r descStat3}
 
 ```
 
 ## III. Visualization
-Learning objectives: Describe the study population using the most appropriate indicators
+Learning objectives: Describe the study population using the most appropriate visualization tools.
+1. Build at least one histogram, bar chart, pie chart, and box-plot
+  a. Find the relevant variables to visualize with each plot.
+  b. Customize each title, axis labels and legends.
+```{r plot1}
 
-```{r plot}
+```
+2. Using "layout()", find a relevant comparison to highlight by ploting the selected grouped data side by side.
+```{r plot2}
 
 ```
 
-## IV. Statistical tests (Ref Modeul 111 - Day 11 September 28. Homework 2)
+
+## IV. Statistical tests (Ref Module 111 - Day 11 September 28. Homework 2)
 Formulate statistical hypothesis according to the objective aimed by the study
 Apply the statistical test using the R or STATA software and to interpret the results
 Measure the strength of the association between two quantitative or qualitative variables and
