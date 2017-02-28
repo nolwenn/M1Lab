@@ -184,6 +184,7 @@ tabrace=table(birthwt$race, birthwt$low, dnn=c("race", "low weight"))
 chisq.test(tabrace)
 ```
 
+
 `r if(solution){colFmt("The p-avlue is higher than 0.05. We cannot reject H0. It seems that there is no sognificant association between the race and the low birth weight", "blue")}`
 
 # Homework

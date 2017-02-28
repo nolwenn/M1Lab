@@ -1,0 +1,113 @@
+---
+title: 'Homework3'
+author: "Nolwenn Le Meur"
+date: "16 December 2016"
+output: pdf_document
+---
+```{r include=FALSE}
+knitr::opts_chunk$set(eval=F, echo=F)
+solution <- F
+```
+
+```{r correction, eval=T, echo=F, include=F}
+#Color Format
+colFmt = function(x,color){
+  outputFormat = knitr::opts_knit$get("rmarkdown.pandoc.to")
+  if(outputFormat == 'latex')
+    paste("\\textcolor{",color,"}{",x,"}",sep="")
+  else if(outputFormat == 'html')
+    paste("<font color='",color,"'>",x,"</font>",sep="")
+  else
+    x
+}
+```
+
+#Objectives:
+* Descriptive statistics
+* Graphics
+* Univariate tests
+* Linear regression
+
+You are interested in air quality around Rennes area. You get data from 2001. The variables are:
+
+- date of the measurement
+- maxO3 the highest(worst) ozone level of the day
+- T9, T12, T15 temperature at 9am, noon, and 3pm
+- N9, N12, N15 nebulosity at 9am, noon, and 3pm
+- W9, W12, W15 at 9am, noon, and 3pm
+- maxO3eve the highest(worst) ozone level of the previous day 
+- wind
+- rain
+
+## I. Descriptive statistics
+Use the fonction load() to load the RData file as follow:
+
+1. What are the types of the variables
+```{r load data}
+load("air.Rdata")
+```
+`r if(solution){colFmt("Quantitative continous: Date, max03, T9, T12,T15, N9, N12, N15, W9, W12, W15, max03eve; Qualitative: Wind (nominal), Rain (binary)", "blue")}`
+
+2. Using the summary() function to compute descriptive statistical parameters. Are all the results meanfull?
+```{r summary}
+summary(air)
+```
+`r if(solution){colFmt("Date should not be summarized.", "blue")}`
+
+3. Use the epiDisplay package and the ci() to compute the confidence
+interval for the max03 variable. Explicit the result
+```{r ci}
+library(epiDisplay)
+ci(air$maxO3)
+```
+
+## II. Graphics
+4. Choose the propriate plot to represent exposition to max03 
+```{r summary2}
+plot(air$Date,air$maxO3, type="l", 
+     xlab="Date", ylab="O3", col="red", main="Evolution of the highest level of ozone per day in Rennes in summer 2001")
+```
+
+## III. Univariate statistical tests
+5. The recommended limit for ozone in the OMS 2005 Air Quality Guidelines is 100 micrograms per m3. What is the proportion of days with ozone above that threshold.
+```{r split}
+air$aboveT = 0
+air$aboveT[air$maxO3> 100] = 1
+prop.table(table(air$aboveT))
+```
+
+6. Test whether there is an association between the proportion of days with ozone above the OMS threshold and the rain 
+```{r rain}
+fisher.test(air$Rain, air$aboveT)
+prop.table(table(air$Rain, air$aboveT), margin = 2)
+```
+
+7. Test whether there is an association between the proportion of days with ozone above the OMS threshold and the wind. 
+8. In case of a relationshisp what wind seems problematic?
+```{r wind}
+fisher.test(air$Wind, air$aboveT)
+prop.table(table(air$Wind, air$aboveT), margin = 2)
+```
+
+## IV. Regression
+9. You want to model the level of ozone with the temperature and the nebulosity using a simple linear regression. Which model best explain the level of ozone? Why?  
+```{r model}
+regT15 = lm(maxO3~T15, data=air)
+summary(regT15)
+# Best R2 but
+plot(regT15)
+# Poor diagnostic plots
+median(air$maxO3)
+var.test(air$T15[air$maxO3<=81.5], air$T15[air$maxO3>81.5])
+# Variance issue
+
+# Best anwser the assumption of constant variance 
+var.test(air$N15[air$maxO3<=81.5], air$N15[air$maxO3>81.5])
+regN15 = lm(maxO3~N15, data=air)
+summary(regN15)
+# but the residuals are not normaly distributed
+shapiro.test(regN15$residuals)
+
+# it's probable that 
+```
+

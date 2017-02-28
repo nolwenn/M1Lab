@@ -1,0 +1,131 @@
+---
+title: 'Study title'
+author: "your name"
+date: "date"
+output: pdf_document
+---
+
+#Introduction:
+Every data analysis goes through most the steps listed below. Using the template below start your own analysis of the Scabies or the Binge drinking datasets available on REAL. 
+
+## I. Data management
+Learning objectives: Prepare the data for statistical analysis
+
+1. Load data store in a csv file in R
+```{r load data}
+scabies=read.csv("ScabiesData.csv", sep=";", header=T)
+```
+
+2. Verify the dimension of your dataset by counting the statistical units and the variables
+```{r dimensions}
+nrow(scabies)
+ncol(scabies)
+```
+
+3. List the variables (using their names) related to the patients' characteristics, the outcome, and the risk factors or potential counfounders.
+```{r variable names}
+names(scabies)
+```
+
+4. Verify that the variable types (quantitative, qualitative) are correct, if not convert them.
+```{r variable type}
+summary(scabies)
+str(scabies)
+scabies$SEXE = factor(scabies$SEXE, levels=c(1,2), labels=c("Male", "Female"))
+scabies$STATUS = factor(scabies$STATUS, levels=c(1,2), labels=c("Patient", "Staff"))
+scabies$SCABIES = factor(scabies$SCABIES, levels=c(1,0), labels=c("Yes", "No"))
+scabies$START = as.Date(scabies$START, "%d/%m/%Y")
+scabies$PRURIT = factor(scabies$PRURIT, levels=c(1,2), labels=c("Yes", "No"))
+scabies$SILLON = factor(scabies$SILLON, levels=c(1,2), labels=c("Yes", "No"))
+scabies$SARCOPTE = factor(scabies$SARCOPTE, levels=c(1,2), labels=c("Yes", "No"))
+scabies$LOCAL = factor(scabies$LOCAL, levels=c(1,2,3,7), labels=c("Hands", "Members","Trunk","Everywhere"))
+scabies$ASCABIOL = factor(scabies$ASCABIOL, levels=c(1,2), labels=c("Yes", "No"))
+scabies$FLOOR = factor(scabies$FLOOR, levels=c(1,2,3), labels=c("First", "Second","Third"))
+scabies$NEIGHBOR = factor(scabies$NEIGHBOR, levels=c(1,2), labels=c("Yes", "No"))
+scabies$STATE = factor(scabies$STATE, levels=c(1,2,3), labels=c("Valid", "Limited","Bed"))
+scabies$MEALS = factor(scabies$MEALS, levels=c(1,2), labels=c("DiningRoom", "Bedroom"))
+scabies$MOVE = factor(scabies$MOVE, levels=c(1,2), labels=c("Yes", "No"))
+scabies$VISITS = factor(scabies$VISITS, levels=c(1,2,3,4), labels=c("Frequent", "Sporadic","Rare","None"))
+scabies$OUTSIDE = factor(scabies$OUTSIDE, levels=c(1,2,3,4), labels=c("Frequent", "Sporadically","Rarely","Never"))
+scabies$CONTACT = factor(scabies$CONTACT, levels=c(1,2), labels=c("Yes", "No"))
+scabies$WORKSHIFT = factor(scabies$WORKSHIFT, levels=c(1,2), labels=c("Day", "Night"))
+```
+
+
+## II. Descriptive statistics
+Learning objectives: Describe the study population using the most appropriate indicators
+
+1. Centrality measures: 
+  a. Compute the mean, median, first and third quartile of each relevant variables.
+  b. Do the same thing but grouped by the outcome variable (using by).
+```{r descStat1}
+summary(scabies$AGE)
+by(scabies$AGE,scabies$SCABIES, summary)
+```
+2. Dispersion measures: 
+  a. Compute the range, variance and standard deviation of each relevant variables. 
+  b. Do the same thing but grouped by the outcome variable (using by).
+```{r descStat2}
+range(scabies$AGE)
+var(scabies$AGE)
+sd(scabies$AGE)
+by(scabies$AGE,scabies$SCABIES,range)
+by(scabies$AGE,scabies$SCABIES,var)
+by(scabies$AGE,scabies$SCABIES,sd)
+```
+3. Frequency measures: 
+  a. What is the purpose of the tabulate() function ? Use it on the age variable and interpret the result.
+  b. What is the purpose of the which.max() function ? Use it on the previous result and interpret.
+  c. Use the table and prop.table functions on two relevant variables you want to cross. Interpret. 
+```{r descStat3}
+tabulate(scabies$AGE)
+which.max(tabulate(scabies$AGE))
+table(scabies$SEXE,scabies$SCABIES)
+```
+
+## III. Visualization
+Learning objectives: Describe the study population using the most appropriate visualization tools.
+1. Build at least one histogram, bar chart, pie chart, and box-plot
+  a. Find the relevant variables to visualize with each plot.
+  b. Customize each title, axis labels and legends.
+```{r plot1}
+hist(scabies$AGE, main="Distribution of ages", xlab="years")
+hist(scabies$START, "months", main="Scabies epidemic curve", xlab="months")
+boxplot(AGE ~ SCABIES, data=scabies, main="Distribution of ages by scabies status", xlab="Scabies", ylab="age (years)")
+barplot(table(scabies$SCABIES, scabies$STATE))
+```
+2. Using "layout()", find a relevant comparison to highlight by ploting the selected grouped data side by side.
+```{r plot2}
+
+```
+
+
+## IV. Statistical tests (Ref Module 111 - Day 11 September 28. Homework 2)
+Learning objectives: Perform and interpret a statistical test to compare means or proportions for 2 groups or more
+
+1. Formulate a statistical hypothesis to test the potential relationship between your outcome and an other quantitative variable (patients'characteritics or presume risk factors) 
+2. Perform the appropriate test and interpret (do not forget the potential  underlying assumption(s))
+```{r tests}
+
+```
+
+3. Formulate a statistical hypothesis to test the potential relationship between your outcome and an other qualitative variable (patients'characteritics or presume risk factors) 
+4. Perform the appropriate test and interpret (do not forget the potential  underlying assumption(s))
+```{r tests}
+
+```
+
+
+
+## V. Linear regression (Ref. Module 106 - Day 16, November 9. Homework 3)
+Learning objectives: (If appropriate) Build a linear model between 2 quantitiative variables.
+
+1. Display the appropriate scatter plot
+2. Compute the correlation coefficient 
+3. Build the linear model
+3. Assess the validity of the linear model using diagnostic plot
+4. Interpet the model
+
+```{r model}
+```
+
