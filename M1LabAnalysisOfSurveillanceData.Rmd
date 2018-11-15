@@ -2,7 +2,7 @@
 ---
 title: 'Lab: Analysis of surveillance data'
 author: "Nolwenn Le Meur & Pascal Crepey"
-date: "20 September 2016"
+date: "14 November 2018"
 output: pdf_document
 ---
 
